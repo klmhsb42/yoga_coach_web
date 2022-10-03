@@ -27,5 +27,7 @@ To use *Yoga Coach web* is intuitive. To start, just select the exercise you wan
 
 ## Technical background
 
+*Yoga Coach web* is based on the webframework [Flask](https://palletsprojects.com/p/flask/) and [Jinja](https://palletsprojects.com/p/jinja/). Most data is send through a websocket using [Flask-SocketIO](https://flask-socketio.readthedocs.io/en/latest/). The body pose detection is performed by [MediaPipe Pose](https://google.github.io/mediapipe/solutions/pose.html). The text-to-speech (TTS) is performed by [gTTS](https://github.com/pndurette/gTTS).
+
 ## How to add new exercises
 
