@@ -1,0 +1,54 @@
+{
+    "category": [
+        {
+            "title": "Yoga for beginners",
+            "exercise": [
+                {
+                    "title": "Tree with arms up",
+                    "img": "static/excercises/0/1/yoga-2.jpg",
+                    "img-origin": "https://commons.wikimedia.org/wiki/File:Vriksasana_Yoga-Asana_Nina-Mel.jpg",
+                    "img-date": "03/10/2022",
+                    "description-api": "Vriksasana",
+                    "description": "",
+                    "angles": []
+                },
+                {
+                    "title": "Lord of the dance",
+                    "img": "static/excercises/0/2/yoga-3.jpg",
+                    "img-origin": "https://commons.wikimedia.org/wiki/File:Mr-yoga-lord_of_dance_4.jpg",
+                    "img-date": "03/10/2022",
+                    "description-api": "Natarajasana",
+                    "description": "",
+                    "angles": []
+                },
+                {
+                    "title": "Half boat",
+                    "img": "static/excercises/0/3/yoga-4.jpg",
+                    "img-origin": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Mr-yoga-boat-pose2.jpg",
+                    "img-date": "03/10/2022",
+                    "description-api": "Navasana",
+                    "description": "",
+                    "angles": [118.77879783596462,108.52354914617311,92.6127346625851,114.83807054284385,95.38560982618957,91.77440698871477,116.32116362032973,97.27856370018833,68.33564555889038,78.03631030788665,93.26450087717774,127.72816881872254,150.51677485254126,101.14424856690425,143.5732435779299,129.02698167537883]
+                },
+                {
+                    "title": "Sunbird Pose",
+                    "img": "static/excercises/0/5/yoga-6.jpg",
+                    "img-origin": "https://commons.wikimedia.org/wiki/File:Home_yoga_workout.jpg",
+                    "img-date": "03/10/2022",
+                    "description-api": "Bidalasana",
+                    "description": "",
+                    "angles": []
+                },
+                {
+                    "title": "Warrior II",
+                    "img": "static/excercises/0/6/yoga-7.jpg",
+                    "img-origin": "https://commons.wikimedia.org/wiki/File:Yoga_(9707548938).jpg",
+                    "img-date": "03/10/2022",
+                    "description-api": "Virabhadrasana",
+                    "description": "",
+                    "angles": []
+                }
+            ]
+        } 
+    ]
+}

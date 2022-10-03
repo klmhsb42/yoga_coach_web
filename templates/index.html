@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Coach</title>
+  
+  <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">-->
+  <link rel="stylesheet" href="static/style.css">
+  <link rel="icon" href="static/img/logo.svg">
+</head>
+
+<body>
+
+
+  <!-- POPUP -->
+
+  <div id="popup-container">
+    <a style="color: white; font-size: 38px;" class="popup-button" id="hide-popup">&times;</a>
+
+<!--
+<div id="popup-username">
+  <span style="font-size: 42px;">What is your name?</span>
+  <br>
+  <input type="text" placeholder="username"/>*
+  <br>
+  <a href="#">Restore from file</a>
+  <br>
+  *All saved data will be stored locally on your browser, which will be deleted after closing the session.
+  If you want to restore your data in the next session, please download it under "Profile".
+</div>
+-->
+    <div  id="popup-container-inner-cat">
+      <span>Select a category</span>
+      <div id="popup-container-inner-cat-grid">
+          {% for showlist_exercise_cat in exercises_data['category'] %}
+        
+          <div class="exercise-cat-items">
+            <a id="show-popup-inner" href="">{{loop.index}} / {{loop.length}} {{ showlist_exercise_cat['title'] }}</a>
+          </div>
+          
+        {% endfor %}
+
+        <div class="exercise-cat-items-placeholder"></div>
+        <div class="exercise-cat-items-placeholder"></div>
+        <div class="exercise-cat-items-placeholder"></div>
+        <div class="exercise-cat-items-placeholder"></div>
+        <div class="exercise-cat-items-placeholder"></div>
+        <div class="exercise-cat-items-placeholder"></div>
+        <div class="exercise-cat-items-placeholder"></div>
+        <div class="exercise-cat-items-placeholder"></div>
+        <div class="exercise-cat-items-placeholder"></div>
+        <div class="exercise-cat-items-placeholder"></div>
+        <div class="exercise-cat-items-placeholder"></div>
+      </div>
+        </div>
+        
+    <div  id="popup-container-inner">
+
+<a class="" id="hide-popup-inner">Back</a>
+    <br>
+    {% for showlist_exercise in exercises_data['category'][0]['exercise'] %}
+  
+    <div class="">{{loop.index}} / {{loop.length}} {{ showlist_exercise['title'] }}</div>
+    <div class="">
+    <img width="25px" src="{{ showlist_exercise['img'] }}">
+    </div>
+    <div class="">{{ showlist_exercise['description'] }}</div>
+ 
+  {% endfor %}
+  </div>
+</div>
+
+
+
+
+<!-- SIDEBAR -->
+
+
+  <div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="javascript:void(0)" class="" onclick="openNavPages(4)">Profile</a>
+    <a href="javascript:void(0)" class="" onclick="openNavPages(5)">History</a>
+    <a href="javascript:void(0)" class="" onclick="openNavPages(2)">Settings</a>
+    <a href="javascript:void(0)" class="" onclick="openNavPages(1)">About</a>
+    <a href="javascript:void(0)" class="" onclick="openNavPages(3)">Contact</a>
+
+  </div>
+
+  <div id="sidenav-pages">
+<div id="sidepage-1" class="sidepage">
+  <span class="sidepage-headline">About</span>
+  <div class="sidepage-content">
+    <img src="static/img/logo.svg" style="width: 150px; height: 150px;"/>
+    <br>
+    text
+  </div>
+</div>
+<div id="sidepage-2" class="sidepage">
+  <span class="sidepage-headline">Settings</span>
+  <div class="sidepage-content">text</div>
+</div>
+<div id="sidepage-3" class="sidepage">
+  <span class="sidepage-headline">Contact</span>
+  <div class="sidepage-content">text</div>
+</div>
+<div id="sidepage-4" class="sidepage">
+  <span class="sidepage-headline">Profile</span>
+  <div class="sidepage-content">text</div>
+</div>
+<div id="sidepage-5" class="sidepage">
+  <span class="sidepage-headline">History</span>
+  <div class="sidepage-content">text</div>
+</div>
+  </div>
+
+
+
+  <!-- GRID -->
+
+<div class="container">
+<div class="headline cell">
+  <span style="float: left;"><img src="static/img/logo.svg" style="width: 50px; height: 50px;"/> Coach</span>
+  <span style="float: right; font-size: 30px; cursor: pointer;" onclick="openNav()">&#9776;</span>
+
+</div>
+  <div class="message cell">
+    <span class="emoji">&#128588;</span>
+    <span id="instruction_txt">Welcome, happy to see you!</span>
+  </div>
+  <div class="score cell" style="clear: both;">
+    <div style="float: left; margin-left: 10%;">
+    <span class="emoji">&#128175;</span>
+    </div>
+    <div style="float: right; text-align:left;">
+    <span>Current:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    <span id="score_val">0</span>
+    <span>/ 10</span>
+    <span id="score_message">No status.</span>
+    <br>
+    <span>Maximum:</span>
+    <span id="score_max">0</span>
+    <span>/ 10</span>
+    <span id="score_max_message">No status.</span>
+  </div>
+  </div>
+  <div class="timer cell">
+    <span class="emoji">&#9200;</span>
+  
+<span id="result">00:00</span>
+   
+     
+  </div>
+  <div class="swipe cell">
+
+<div style="clear: both; padding: 1%; width: 90%; margin: 0 auto 0 auto;" class="">
+  <a style="float: left;" class="popup-button" id="show-popup">&#9783;</a>
+  <span style="float: none; text-align: center;">{{exercises_data['category'][0]['title']}}</span>
+</div>
+   
+    <!-- Slideshow container -->
+<div class="slideshow-container">
+
+  <!-- Full-width images with number and caption text -->
+
+  {% for exercise in exercises_data['category'][0]['exercise'] %}
+  <div class="mySlides fade">
+    <div class="numbertext" style="clear: both;">
+      <span style="float: left;">{{loop.index}} / {{loop.length}}</span>
+      <span>{{ exercise['title'] }}</span>
+      <span style="float: right;">
+        <a style="text-decoration: none;" class="show-exercise-description" href="#">&#9432;</a>
+      </span>
+    </div>
+    <div class="imgdiv">
+    <img src="{{ exercise['img'] }}">
+    <br>
+    <span style="font-size: 12px;">Image taken from
+      <a target="_blank" href="{{ exercise['img-origin'] }}">commons.wikimedia.org</a> on {{ exercise['img-date'] }}.
+    </span>
+    <div class="text" style="clear: both;">
+      <a style="color:#fff; text-decoration: none; float: right;" class="hide-exercise-description" href="#">&times;</a>
+      <br>
+      <div class="" style="clear: both;">
+        <span style="float: left;">{{loop.index}} / {{loop.length}}</span>
+        <span>{{ exercise['title'] }}</span>
+      </div>
+      <br>
+      <span>{{ exercise['description'] }}</span>
+      <br><br>
+      <span>Taken from <a style="color:#bbb; text-decoration: none;" target="_blank" href="https://en.wikipedia.org/wiki/{{ exercise['description-api'] }}">en.wikipedia.org</a>.</span>
+    </div>
+    </div>
+    
+  </div>
+  {% endfor %} 
+
+</div>
+
+
+
+
+  </div>
+  <div class="video-out cell">
+
+          <div id="" style="display: none;">
+            <video autoplay playsinline id="videoElement" style="background-color: black;"></video>
+            <canvas id="canvas"  width="700" height="525"></canvas>
+            </div>
+        
+            <div class="video">
+                <img id="photo">
+                
+            </div>
+        
+  
+
+  </div>
+  <div class="video-control cell">
+    <div class="start subcell"> <button id="button-start" type="button" onclick="startProcess()">Start</button> </div>
+    <div class="stop subcell"> <button id="button-stop" type="button" onclick="stopProcess()" disabled>Stop</button> </div>
+  </div>
+  <div class="swipe-control cell">
+    <div class="prevgrid subcell"> <button id="button-prev" class="prev" type="button" onclick="plusSlides(-1)">Prev</button> </div>
+    <div class="nextgrid subcell"> <button id="button-next" class="next" type="button" onclick="plusSlides(1)">Next</button> </div>
+  </div>
+  
+</div>
+
+<audio style="visibility: hidden;" id="audio-player" src="static/speech.mp3" type="audio/mp3" controls="controls"></audio> 
+
+<!-- SCRIPTS -->
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.0/socket.io.js'></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+
+<script type="text/javascript">
+const root_url = {{request.root_url|tojson|safe}};
+</script>
+<script type="text/javascript" src="static/script.js"></script>
+</body>
+
+</html>
