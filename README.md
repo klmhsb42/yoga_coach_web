@@ -39,5 +39,25 @@ MediaPipe Pose is based on ... and has advantages ...
 
 gTTS is based on ...
 
+### EDA
+
+...
+
 ## How to add new exercises
+
+### Collect data
+
+Collect data of your body pose
+
+### Select correct data
+
+You can plot the landmarks.
+
+### Calculate angles
+
+...
+
+### Insert data
+
+...
 
