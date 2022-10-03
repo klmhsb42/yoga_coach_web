@@ -1,0 +1,449 @@
+
+/* GENERAL */
+
+
+html, body {
+    height: 100%;
+    background: linear-gradient(175deg, rgba(216,220,241,1) 0%, rgba(243,244,251,1) 100%);
+    margin: 0;
+    font-family: sans-serif;
+    font-size: 22px;
+    overflow: hidden;
+  }
+
+/* Next & previous and start/stop video buttons */
+button {
+  cursor: pointer;
+  
+  padding: 10px;
+  color: #20295b;
+  font-weight: bold;
+  font-size: 16px;
+  transition: 0.6s ease;
+  border-radius: 0;
+  border: 1px solid #20295b;
+  user-select: none;
+  background-color: transparent;
+}
+
+
+/* On hover, add a black background color with a little bit see-through */
+button:hover {
+  background-color: #20295b;
+  color: #f3f4fb;
+}
+
+button:disabled{
+  
+  color: #BBB;
+  cursor: default;
+}
+
+button:disabled:hover{
+  
+  color: #BBB;
+  cursor: default;
+  background-color: #ccc;
+}
+
+  /* GRID */
+
+  .emoji {
+    font-size: 42px;
+  }
+    
+  .container { 
+  text-align:center;
+   
+  height: 100%;
+  display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    /*gap: 5px 5px;*/
+    grid-auto-flow: row;
+    grid-template-areas:
+      "headline headline headline headline"
+      "score message message timer"
+      "score message message timer"
+      "swipe swipe video-out video-out"
+      "swipe swipe video-out video-out"
+      "swipe swipe video-out video-out"
+      "swipe swipe video-out video-out"
+      "swipe swipe video-out video-out"
+      "swipe-control swipe-control video-control video-control";
+      align-items: center;
+   justify-items: center;
+  }
+  
+  .message { 
+    background: transparent;
+    color: #2d397f;
+    grid-area: message; 
+    font-size: 32px;
+    padding: 1%;
+    /*align-self: stretch;*/
+   justify-self: stretch;
+  }
+  
+  .score { 
+    background: transparent;
+  color: #2d397f;
+  grid-area: score; 
+  padding: 1%;
+  justify-self: stretch;
+}
+  
+  .timer { 
+    background: transparent;
+  color: #2d397f;
+  grid-area: timer; 
+  font-size: 38px;
+  padding: 1%;
+  justify-self: stretch;
+}
+  
+  .swipe { 
+    background: transparent;
+  color: #2d397f;
+  grid-area: swipe; 
+  align-self: stretch;
+  justify-self: stretch;
+}
+  
+  .video-out { 
+    background: transparent;
+  color: #2d397f;
+  grid-area: video-out; 
+  justify-self: stretch;
+}
+  
+  .video-control {  
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      ". start stop .";
+    grid-area: video-control;
+    background: transparent;
+  color: #2d397f;
+  
+  }
+  
+  .start { 
+    background: transparent;
+  color: #2d397f;
+  grid-area: start; 
+}
+  
+  .stop { 
+    background: transparent;
+  color: #2d397f;
+  grid-area: stop; 
+}
+  
+  .swipe-control {  
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      ". prevgrid nextgrid .";
+    grid-area: swipe-control;
+    background: transparent;
+  color: #2d397f;
+  
+  }
+  
+  .prevgrid { 
+    background: transparent;
+  color: #2d397f;
+  grid-area: prevgrid; 
+}
+  
+  .nextgrid { 
+    background: transparent;
+  color: #2d397f;
+  grid-area: nextgrid; 
+}
+  
+  .headline { 
+    grid-area: headline; 
+    box-shadow: 0 8px 4px -4px #BBB;
+    clear: both; 
+    background-color: #3f51b5; 
+    color: #f3f4fb;
+    padding: 1%;
+    z-index: 2;
+    justify-self: stretch;
+    align-self: stretch;
+  }
+  
+  
+  /*
+  .subcell {
+  background: #eee;
+  }
+  */
+
+
+  /* VIDEO */
+  
+  .myCanvas {
+  background: #000;
+  }
+  
+  
+  #photo {
+    box-shadow: 0px 0px 8px #BBB;
+    width: 700px;
+    height: 525px;
+    background-color: black;
+  }
+  
+  
+  
+  
+
+
+
+  /* SLIDESHOW */
+  
+  
+  
+  
+  * {box-sizing:border-box}
+  
+  /* Slideshow container */
+  .slideshow-container {
+    max-width: 1000px;
+    position: relative;
+    margin: auto;
+    margin: 2% auto 0 auto;
+    width: 90%;
+    box-shadow: 0px 0px 8px #BBB;
+  }
+  
+  /* Hide the images by default */
+  .mySlides {
+    display: none;
+  }
+  
+  
+  
+  /* Caption text */
+  .text {
+    color: #fff;
+    height: 100%;
+    padding: 15px;
+    font-size: 18px;
+    width: 100%;
+    text-align: justify;
+    background: rgba(32, 41, 91, 0.9);
+    position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  }
+  
+  /* Number text (1/3 etc) */
+  .numbertext {
+    color: #000;
+    
+    padding: 15px;
+    
+    background: #f3f4fb;
+  }
+  
+  .imgdiv {
+  background: #f3f4fb;
+  text-align: center;
+  padding: 15px;
+  }
+
+  .imgdiv img {
+    border: 1px solid #20295b;
+    height:370px;
+  }
+  
+  
+  
+  /* Fading animation */
+  .fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+  }
+  
+  @keyframes fade {
+    from {opacity: .4}
+    to {opacity: 1}
+  }
+
+
+
+
+
+  /* SIDEBAR */
+
+  .sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    right: 0;
+    background-color: #20295b;
+    overflow-x: hidden;
+    transition: 0.3s;
+    padding-top: 60px;
+  }
+  
+  .sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #f3f4fb;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidenav a:hover {
+    color: #818181;
+  }
+  
+  .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
+  
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+
+  #sidenav-pages {
+    height: 100%;
+    width: 0px;
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    right: 15%;
+    background-color: #fff;
+    overflow-x: hidden;
+    transition: 0.3s;
+    color: #000;
+  }
+
+  .sidepage {
+    display: none;
+    padding: 2%;
+    overflow-y: auto;
+  }
+
+  .sidepage-headline {
+    font-size: 36px;
+  }
+
+  .sidepage-content {
+    font-size: 20px;
+    padding: 5%;
+  }
+
+
+
+  /* POPUP */
+  #popup-container {
+    display: none;
+    z-index: 4;
+    background-color: rgba(0, 0, 0, 0.8);
+    width: 100%;
+    height: 100%;
+    padding: 2%;
+    margin: 0;
+    position: fixed;
+    transition: 0.5s;
+    overflow-y: auto;
+  }
+
+  #popup-container-inner {
+    z-index: 5;
+    background-color: #fff;
+    box-shadow: 0px 0px 8px #BBB;
+    width: 75%;
+    height: 75%;
+    padding: 2%;
+    margin: 6.25% 12.5%;
+    position: fixed;
+    transition: 0.5s;
+    overflow-y: auto;
+    display: none;
+  }
+
+  
+
+  .exercise-cat-items {
+    background-color: #555;
+    box-shadow: 0px 0px 8px #000;
+    margin: 15px;
+    min-height: 200px;
+    padding: 2%;
+  }
+
+  .exercise-cat-items a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .exercise-cat-items a:hover {
+    font-weight: bold;
+  }
+
+  .exercise-cat-items-placeholder {
+    background-color: #818181;
+    box-shadow: 0px 0px 8px #000;
+    margin: 15px;
+    min-height: 200px;
+    padding: 2%;
+  }
+
+  .popup-button {
+    cursor: pointer;
+  }
+
+  #popup-container-inner-cat {
+    
+    z-index: 5;
+    background-color: transparent;
+    color: #fff;
+    width: 75%;
+    height: 75%;
+    
+    margin: 6.25% 12.5%;
+    position: fixed;
+    transition: 0.5s;
+    overflow-y: auto;
+  }
+
+  #popup-container-inner-cat-grid {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    width: 100%;
+  }
+
+  #popup-username {
+    z-index: 5;
+    background-color: transparent;
+    color: #fff;
+    width: 75%;
+    height: 75%;
+    
+    margin: 6.25% 12.5%;
+    position: fixed;
+    transition: 0.5s;
+    overflow-y: auto;
+  }

@@ -6,7 +6,7 @@ A coputer vision based yoga coach web app
 
 ## Abstract
 
-*Yoga Coach web* is a web app that allows you to record your body pose with your webcam and will give you feedback how good your doing on a certain exercise based on coputer vision analysis. This app was developed as my final project during the data science bootcamp at [Spiced Academy](https://www.spiced-academy.com/de/program/data-science) in Berlin. If you dont' want to setup by yourself, you can have a look at the screenshots.
+*Yoga Coach web* is a web app that allows you to record your body pose with your webcam and will give you feedback how good your doing on a certain exercise based on coputer vision analysis. This app was developed as my final project during the data science bootcamp at [Spiced Academy](https://www.spiced-academy.com/de/program/data-science) in Berlin. If you don't want to setup by yourself, you can have a look at the screenshots.
 
 ## Credits
 
@@ -39,7 +39,7 @@ MediaPipe Pose is based on ... and has advantages ...
 
 gTTS is based on ...
 
-### EDA
+### EDA and calculation of angles
 
 ...
 

@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <title>Coach</title>
   
-  <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/picnic">-->
-  <link rel="stylesheet" href="static/style.css">
+  
+  <link rel="stylesheet" href="static/style/main.css">
   <link rel="icon" href="static/img/logo.svg">
 </head>
 
@@ -227,7 +227,7 @@
   
 </div>
 
-<audio style="visibility: hidden;" id="audio-player" src="static/speech.mp3" type="audio/mp3" controls="controls"></audio> 
+<audio style="visibility: hidden;" id="audio-player" src="static/audio/feedback.mp3" type="audio/mp3" controls="controls"></audio> 
 
 <!-- SCRIPTS -->
 
@@ -239,7 +239,7 @@
 <script type="text/javascript">
 const root_url = {{request.root_url|tojson|safe}};
 </script>
-<script type="text/javascript" src="static/script.js"></script>
+<script type="text/javascript" src="static/script/main.js"></script>
 </body>
 
 </html>

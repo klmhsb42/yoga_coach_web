@@ -372,7 +372,7 @@ def timer_stop():
 
 def audio_func(audiotext):
     tts = gTTS(text=audiotext, lang='en')
-    filename = "static/speech.mp3"
+    filename = "static/audio/feedback.mp3"
     tts.save(filename)
     #with open(filename, "rb") as fwav:
         #audiofile = fwav.read(2048)
@@ -388,7 +388,7 @@ def audio_func(audiotext):
     urlstr = 'http://127.0.0.1:5000/'+filename
     bloburl = 'http://127.0.0.1:5000/static/'
 
-    socketio.emit('audio_socket', {'audiofile': "speech.mp3", 'audio_url': urlstr, 'bloburl': bloburl})
+    socketio.emit('audio_socket', {'audiofile': "feedback.mp3", 'audio_url': urlstr, 'bloburl': bloburl})
     #socketio.emit('audio_socket', url_for('static',filename=filename))
     #filename.close()
 
