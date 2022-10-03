@@ -10,7 +10,7 @@ A coputer vision based yoga coach web app
 
 ## Credits
 
-I thank all [people from Spiced Academy](https://www.spiced-academy.com/de/about) that supported me.
+I thank all [people from Spiced Academy](https://www.spiced-academy.com/de/about) that supported me. Images for exercises were taken from [commons.wikimedia.org](https://commons.wikimedia.org/). The respective URL and date of access are shown in the app. Descriptions of exercises are taken from the [en.wikipedia.org](https://en.wikipedia.org/wiki/) JSON API and a respective link given to further read the article.
 
 ## How to setup
 
@@ -27,7 +27,17 @@ To use *Yoga Coach web* is intuitive. To start, just select the exercise you wan
 
 ## Technical background
 
-*Yoga Coach web* is based on the webframework [Flask](https://palletsprojects.com/p/flask/) and [Jinja](https://palletsprojects.com/p/jinja/). Most data is send through a websocket using [Flask-SocketIO](https://flask-socketio.readthedocs.io/en/latest/). The body pose detection is performed by [MediaPipe Pose](https://google.github.io/mediapipe/solutions/pose.html). The text-to-speech (TTS) is performed by [gTTS](https://github.com/pndurette/gTTS).
+### Workflow
+
+*Yoga Coach web* is based on the webframework [Flask](https://palletsprojects.com/p/flask/) and [Jinja](https://palletsprojects.com/p/jinja/). Most data is send through a websocket using [Flask-SocketIO](https://flask-socketio.readthedocs.io/en/latest/). The body pose detection is performed by [MediaPipe Pose](https://google.github.io/mediapipe/solutions/pose.html) live in the backend using python. The [pose landmarks](https://google.github.io/mediapipe/solutions/pose.html#pose_landmarks) from MediaPipe Pose are used to calculate their angles. These angles were calculated for each exercise with a python script. The difference between of the correct angles and the current angles is caluclated. Then, a feedback text is created based on these differences. The text-to-speech (TTS) for feedback is performed by [gTTS](https://github.com/pndurette/gTTS).
+
+### Scientific reading
+
+The workflow was inspired by [Muley et. al 2020](https://www.irjmets.com/uploadedfiles/paper/volume2/issue_9_september_2020/4037/1628083159.pdf) and [Thoutam et. al 2022](https://doi.org/10.1155/2022/4311350).
+
+MediaPipe Pose is based on ... and has advantages ...
+
+gTTS is based on ...
 
 ## How to add new exercises
 
