@@ -20,6 +20,7 @@ I thank all [people from Spiced Academy](https://www.spiced-academy.com/de/about
 4) Clone the repository: `git clone https://github.com/klmhsb42/yoga_coach_web.git`
 5) Go inside the repository folder: `cd yoga_coach_web`
 6) Run the app: `python app.py`
+7) Close the app: `Ctrl + C`
 
 ## How to use
 
@@ -59,5 +60,5 @@ To calculate the angles of these correct pose landmarks you can use [angles.py](
 
 ### Add new exercises and insert data
 
-...
+To add new exercises you have to modify [exercises.json](https://github.com/klmhsb42/yoga_coach_web/blob/main/static/exercises.json). You can either create a new category and add the new exercise there or you can add it dirrectly to an exsisting category. The copied angles from the previous step must then be inserted into `"angles": []` for this new exercise. Now you are ready to re-run the server (see How to setup) and test your new created exercise.
 
