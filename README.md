@@ -10,7 +10,7 @@ A coputer vision based yoga coach web app
 
 ## Credits
 
-I thank all [people from Spiced Academy](https://www.spiced-academy.com/de/about) that supported me. Images for exercises were taken from [commons.wikimedia.org](https://commons.wikimedia.org/). The respective URL and date of access are shown in the app. Descriptions of exercises are taken from the [en.wikipedia.org](https://en.wikipedia.org/wiki/) JSON API and a respective link given to further read the article.
+I thank all [people from Spiced Academy](https://www.spiced-academy.com/de/about) that supported me. Images for exercises were taken from [commons.wikimedia.org](https://commons.wikimedia.org/). The respective URL and date of access are shown in the app. Descriptions of exercises are taken from the [en.wikipedia.org](https://en.wikipedia.org/wiki/) JSON API and a respective link given to further read the article. The video stream processing was followed from the MediaPipe Pose [python API](https://google.github.io/mediapipe/solutions/pose.html) and [this](https://pyshine.com/Online-Video-Processing-From-Client-Camera/) pyshine tutorial.
 
 ## How to setup
 
@@ -41,7 +41,7 @@ gTTS is based on ...
 
 ### EDA and calculation of angles
 
-The EDA of the returned pose landmarks is documented in [this](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/analysis.ipynb) Jupyter Notebook. Furthermore, how the angles were calculated and compared between correct and wrong pose by one example exercise.
+The EDA of the returned pose landmarks is documented in [this](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/analysis.ipynb) Jupyter Notebook. Furthermore, how the angles were calculated and compared between correct and wrong pose by one example exercise. The angles were calculated following this thread [here](https://stackoverflow.com/questions/2827393/angles-between-two-n-dimensional-vectors-in-python).
 
 ## How to add new exercises
 
