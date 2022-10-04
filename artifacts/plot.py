@@ -11,7 +11,7 @@ mp_pose = mp.solutions.pose
 #_PRESENCE_THRESHOLD = 0.5
 _VISIBILITY_THRESHOLD = 0.5
 
-f_landmarks = open('example/half_boat_right.json')
+f_landmarks = open('collect/landmarks_59.json')
 #f_landmarks = open('collect/world_landmarks_5.json')
 data_landmark_list = json.load(f_landmarks)
 f_landmarks.close()
