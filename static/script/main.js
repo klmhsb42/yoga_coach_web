@@ -86,7 +86,7 @@
       });
 
       socket.on('score_max', function(data) {
-        $("#score_max").text(data.score_max);
+        $("#score_max").text(data.score_max_val);
         $("#score_max").attr('style', 'color:'+data.score_max_color);
         $("#score_max_message").text(data.score_max_message);
         $("#score_max_message").attr('style', 'color:'+data.score_max_color);
@@ -211,6 +211,7 @@ socket.on('audio_socket', function(data) {
 });
 
 
+
 async function createaudioFile(path) {
   // let response = await fetch(path);
   // let data = await response.blob();
@@ -235,78 +236,6 @@ async function createaudioFile(path) {
   }
 };
 
-
-
-      
-
-    
-/*
-function get_audio() {
-
-	//var audiotext = "Please, raise your right arm 10% higher."
-
-  var audiotext = [
-    { "settxt":"Please, raise your right arm 50% higher." }
-];
-
-
-
-        $.ajax({
-	   type: "POST",
-	   url: "audio_feed",
-	   data: JSON.stringify({'settxt': audiotext}),
-     dataType: "json",
-	   processData: false,
-	   contentType: false,
-	   success: (result) => {
-	      //new Audio(result).play()
-	      console.log(result);
-	   },
-	   error: (err) => {
-	      console.log(err);
-	   }
-	});
-*/
-
-/*
-  $.ajax({
-        type: 'POST',
-        url: '/audio_feed',
-        data: JSON.stringify (audiotext),
-        success: (result) => { 
-          //alert('data: ' + data); 
-          
-	        console.log(result);
-          //var mp3Url = 'static/speech.mp3';
-          //$("#audio-player").attr('src', mp3Url);
-          new Audio(result).play();
-        },
-        contentType: "application/json",
-        dataType: 'json'
-    });
-    // stop link reloading the page
-    event.preventDefault();
-
-      }
-
-*/
-      
-
-      /*
-      const intervalID = setInterval(update_values, 1000);
-      
-      function update_values() {
-        $.getJSON(
-          root_url + "_timer?start='True'",
-          data => {
-            $("#result").text(data.result);
-            if (data.result == 0) {
-              clearInterval(intervalID);
-            }
-          }
-        )
-      }
-*/
 
 
 

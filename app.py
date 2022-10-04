@@ -26,65 +26,43 @@ import re
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
-Payload.max_decode_packets = 2048
-
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
-
-#from timer_func import timer_start, timer_stop
-
-
-
-
-
 
 
 ##### INIT AND GLOBALS #####
 
 # ***APP***
 
+Payload.max_decode_packets = 2048
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'                                            
 socketio = SocketIO(app)
 
 
-
 # ***VIDEO***
-
-#video = cv2.VideoCapture(0)
 
 global fps,prev_recv_time,cnt,fps_array
 fps=30
 prev_recv_time = 0
 cnt=0
 fps_array=[0]
+framecount = 0
+
 
 # ***TIMER***
 
-#current_time = 300
-#runthetimer = True
-#timer_loop = True
-
-#timer_bridge_now = datetime.now()
-#timer_bridge_time = timer_bridge_now.time()
-
-time_timer_started = datetime(1, 1, 1, 0, 0, 0) #timer_bridge_time #datetime.time(0, 0, 0, 0)
-#timer_diff = #timer_bridge_time #datetime.time(0, 3, 0, 0)
-timer_diff = timedelta(minutes=3) #300 #datetime(1, 1, 1, 0, 3, 0) #(0, 3, 0, 0)
-time_timer_ended = datetime(1, 1, 1, 0, 0, 0) #timer_bridge_time #datetime.time(0, 0, 0, 0)
+time_timer_started = datetime(1, 1, 1, 0, 0, 0)
+timer_diff = timedelta(minutes=3)
+time_timer_ended = datetime(1, 1, 1, 0, 0, 0)
 
 
 # ***EXERCISES***
 
 exercise_id = 0
 category_id = 0
-
 scoremax = 0
-
-framecount = 0
-
 df_angle_matrix_global = pd.DataFrame()
 
 
@@ -102,6 +80,7 @@ def index():
     exercises_file = open('static/exercises.json',)
     exercises_data = json.load(exercises_file)
 
+    # add wikipedia text for description from the internet
     wikipedia_data = exercises_data
 
     for cat_idx, any_category in enumerate(exercises_data['category']):
@@ -116,27 +95,24 @@ def index():
 
 ##### START / STOP EXERCISE #####
 
-#@app.route('/run', methods=["GET"])
 @socketio.on('run')  
 def run(startdata):
-    global current_time, runthetimer, timer_loop, current_time, exercise_id, category_id, df_angle_matrix_global
+    global exercise_id, category_id, df_angle_matrix_global
 
-    exercise_id = startdata[0] #request.args.get("exc")
-    category_id = startdata[1] #request.args.get("cat")
+    exercise_id = startdata[0]
+    category_id = startdata[1]
     runthecode = startdata[2]
     getrunthetimer = startdata[3]
 
     # if start button was pressed
     if getrunthetimer == 1:
 
-
-
-        #import of exercises.json also done in index, use global!
+        #import of exercises.json also done in index, use global!!!
 
         exercises_file = open('static/exercises.json',)
         exercises_data = json.load(exercises_file)
 
-        # initializes exercise
+        # get correct angles of exercise and add to dataframe
 
         exercise_id_low = exercise_id - 1
 
@@ -148,59 +124,34 @@ def run(startdata):
         df_angle_matrix_global = df_angle_matrix.copy(deep=True)
 
 
+        #give start feedback
+        set_feedback_text = 'Welcome, happy to see you!'
+        feedback_text(set_feedback_text)
 
+
+        #then start the video analysis, or add some sleep or if/else
+        #...
 
         
-        #give start feedback
-        #...
-
-        #start the video stream
-        #video_feed()
-
-        #pre-analysis of feedback, if ready to start
-        #...
-
-        # if the timer should be started (because of video results)
-        # if runthecode == 1:
-        #     runthetimer = True
-        #     timer_loop = True
+        # if the timer should be started (because of video results, body visible)
         timer_start()
 
-        # if the timer should be stopped
-        # elif runthecode == 0:
-        #     runthetimer = False
-        #     timer_loop = False
-        #     timer_stop()
 
-        #start the timer
-        
-        #timer_loop = True
-        #timer_result = timer_start()
         
         
         
 
     # if the stop button was pressed
     elif getrunthetimer == 0:
-        #print('stop')
         
+        # stop timer
         timer_stop()
 
-        #stop the video stream
-        #...
-
         #give final feedback
-        #...
+        set_feedback_text = "I'm happy that you did it! See you in the next exercise."
+        feedback_text(set_feedback_text)
 
 
-# @app.route('/stop')
-# def stop_exercise():
-#     global runthetimer
-#     runthetimer = False
-#     timer_stop()
-    
-#     print('stop')
-#     return 'Process stopped'
 
 
 ##### ANALYZE POSITION #####
@@ -218,11 +169,12 @@ def angle_between(v1, v2):
 def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections):
     global exercise_id, category_id, scoremax, df_angle_matrix_global
 
-    
+
+    # if landmarks are set for current pose
     if hasattr(gettheposelandmarks, 'landmark'):
         
 
-
+        # get landmarks of current pose
         keypoints = []
         for data_point in gettheposelandmarks.landmark:
             keypoints.append({
@@ -232,29 +184,16 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
                                 'visibility': data_point.visibility,
                                 })
 
+        #pre-analysis of feedback, if ready to start (most visible)
+        #...
+
+        # current landmarks to dataframe
         df_keypoints = pd.DataFrame(keypoints)
 
-        # exercises_file = open('static/exercises.json',)
-        # exercises_data = json.load(exercises_file)
-
-        # exercise_id_low = exercise_id - 1
-
-        # get_the_current_angle = exercises_data["category"][category_id]["exercise"][exercise_id_low]["angles"]
-
-        # df_angle_matrix = pd.read_csv('static/angles.csv', sep=',')
-        # df_angle_matrix['angle_correct'] = get_the_current_angle
-
-        # df_angle_global = df_angle_matrix.copy(deep=True)
-
+        # this dataframe matrix contains the correct angles
         df_angle_global = df_angle_matrix_global.copy(deep=True)
 
-        # if df_angle_global.shape[1] > 8:
-        #     print(df_angle_global.shape[1])
-        #     df_angle_global.drop(df_angle_global.columns[len(df_angle_global.columns)-12], axis=1, inplace=True)
-        #     print('remove')
-        #     df_angle_global.shape[1]
-
-
+        # Merge X,Y,Z to the respective indicies
         df_angle_global = df_angle_global.merge(df_keypoints, how="left", left_on='vector_1_idx', right_on=df_keypoints.index)
         df_angle_global.rename(columns={'z':'vector_1_z','x':'vector_1_x','y':'vector_1_y'}, inplace=True)
 
@@ -264,6 +203,7 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
         df_angle_global = df_angle_global.merge(df_keypoints, how="left", left_on='join_idx', right_on=df_keypoints.index)
         df_angle_global.rename(columns={'z':'join_z','x':'join_x','y':'join_y'}, inplace=True)
 
+        # Get X,Y,Z of connectors
         df_angle_global['connector_1_x'] = df_angle_global['vector_1_x'] - df_angle_global['join_x']
         df_angle_global['connector_1_y'] = df_angle_global['vector_1_y'] - df_angle_global['join_y']
         df_angle_global['connector_1_z'] = df_angle_global['vector_1_z'] - df_angle_global['join_z']
@@ -272,8 +212,10 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
         df_angle_global['connector_2_y'] = df_angle_global['vector_2_y'] - df_angle_global['join_y']
         df_angle_global['connector_2_z'] = df_angle_global['vector_2_z'] - df_angle_global['join_z']
 
+        # Make array of connector coordinates
         df_angle_global_array = df_angle_global[['connector_1_z','connector_1_x','connector_1_y','connector_2_z','connector_2_x','connector_2_y']].to_numpy()
 
+        # Calculate and list angles
         angle_list_current = []
 
         for angle_cal in df_angle_global_array:
@@ -283,25 +225,36 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
 
         df_angle_global['angle_current'] = angle_list_current
 
+        # Calculate the difference between correct and current angles
         df_angle_global['diff'] = df_angle_global['angle_correct'] - df_angle_global['angle_current']
 
         df_angle_global['diff_per100'] = (df_angle_global['diff'] / 180) * 100
 
         df_angle_global['diff_per100_abs'] = abs(df_angle_global['diff_per100'])
 
+        # Here create some text for feedback
+        # set_feedback_text = 'Please, raise your right arm 10% higher.'
+        # feedback_text(set_feedback_text)
+
+        # Calculations imoprtant for score
         list_of_angle_diff_length = len(list(df_angle_global['diff_per100_abs']))
 
+        # How much difference in % is allowed between correct and current angle
         angle_threshold = 5
+
+        # How many angles are below this threshold
         list_of_angle_diff_threshold = sum(i < angle_threshold for i in list(df_angle_global['diff_per100_abs']))
 
+        # How much in %
         correctness = list_of_angle_diff_threshold / list_of_angle_diff_length * 100
 
-        feedback(correctness)
+        # send feedback about score
+        feedback_score(correctness)
 
 
 ##### FEEDBACK #####
 
-def feedback(correctness):
+def feedback_score(correctness):
     global score, scoremax
 
     score = 10 - (correctness/10)
@@ -321,25 +274,20 @@ def feedback(correctness):
 
     if score > scoremax:
         scoremax = score
-        socketio.emit('score_max', {'score_max': scoremax})
-        setaudiotext = 'Good job!'
-        socketio.emit('instruction', {'instruction_txt': setaudiotext, 'score_max_message': score_max_message, 'score_max_color': score_max_color})
-        audio_func(setaudiotext)
+        socketio.emit('score_max', {'score_max_val': scoremax, 'score_max_message': score_max_message, 'score_max_color': score_max_color})
+        set_feedback_text = 'New score, good job!'
+        feedback_text(set_feedback_text)
+        
 
-    #give instructions and feedback
-    #audio_func(analyze_result[1])
-    #socketio.emit('score', {'score_val': analyze_result[0]})
-    #socketio.emit('instruction', {'instruction_txt': analyze_result[1]}) 
-    #setaudiotext = 'Please, raise your right arm 10% higher.'
-    #return [score, scoremax, setaudiotext]
-    #socketio.emit('instruction', {'instruction_txt': setaudiotext})
+def feedback_text(feedback_text):
+    socketio.emit('instruction', {'instruction_txt': feedback_text})
+    audio_func(feedback_text)
 
 
 ##### TIMER #####
 
 def timer_start():
     global time_timer_started
-
     time_timer_started = datetime.now()
 
 
@@ -360,10 +308,8 @@ def timer_print():
  
 def timer_stop():
     global time_timer_started, time_timer_ended
-
     time_timer_started = datetime(1, 1, 1, 0, 0, 0)
     time_timer_ended = datetime.now()
-
     timerstr = '{:02d}:{:02d}'.format(0, 0)
     socketio.emit('timer_socket', {'time': timerstr})
 
@@ -374,56 +320,10 @@ def audio_func(audiotext):
     tts = gTTS(text=audiotext, lang='en')
     filename = "static/audio/feedback.mp3"
     tts.save(filename)
-    #with open(filename, "rb") as fwav:
-        #audiofile = fwav.read(2048)
-        #socketio.emit('audio_socket', {'audiofile': audiofile})
-    #audiofile = open(filename,)
-
-    #emit('add-wavefile', url_for('static',filename='_files/' + session['wavename']))
-    #session['wavefile'].close()
-
-    #audiofile = urlopen('http://127.0.0.1:5000/'+filename)
-    #print('audiogot')
-    #decoded_data = audiofile.read()
     urlstr = 'http://127.0.0.1:5000/'+filename
     bloburl = 'http://127.0.0.1:5000/static/'
-
     socketio.emit('audio_socket', {'audiofile': "feedback.mp3", 'audio_url': urlstr, 'bloburl': bloburl})
-    #socketio.emit('audio_socket', url_for('static',filename=filename))
-    #filename.close()
 
-'''
-@app.route('/audio_feed', methods=["POST"])
-def audio_feed():
-    #text = 'Please, raise your right arm 10% higher.'
-    text = request.get_json()
-    gettxt = text[0]['settxt']
-    #text = request.json
-    #print(gettxt)
-    
-    tts = gTTS(text=gettxt, lang='en')
-    filename = "static/speech.mp3"
-    tts.save(filename)
-    #return 'True'
-    #return jsonify({"text": gettxt})
-    
-    #playsound.playsound(filename)
-    
-    return send_file(filename, mimetype="audio/mp3", as_attachment=True)
-    
-     
-    
-    #os.remove(filename)
-    
-    
-    
-    #tts = gTTS(text='', lang='en')
-    #tts.save("static/good.mp3")
-    #os.system("mpg321 static/good.mp3")
-    #return Response("static/good.mp3")
-   ''' 
-
-    
 
 ##### VIDEO #####
 
@@ -432,15 +332,10 @@ def audio_feed():
 def readb64(base64_string):
     idx = base64_string.find('base64,')
     base64_string  = base64_string[idx+7:]
-
     sbuf = io.BytesIO()
-
     sbuf.write(base64.b64decode(base64_string, ' /'))
     pimg = Image.open(sbuf)
-
-
     return cv2.cvtColor(np.array(pimg), cv2.COLOR_RGB2BGR)
-
 
 def moving_average(x):
     return np.mean(x)
@@ -448,18 +343,15 @@ def moving_average(x):
 
 @socketio.on('catch-frame')
 def catch_frame(data):
-
     emit('response_back', data)  
 
 
 @socketio.on('image')
 def image(getdata_image):
     global fps,cnt, prev_recv_time,fps_array,framecount
-
     data_image = getdata_image[0]
     camera_run = getdata_image[1]
 
-    
     framecount = framecount + 1
 
     #if camera_run == 1:
@@ -468,27 +360,7 @@ def image(getdata_image):
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5) as pose:
 
-        
-
-    # pose = mp_pose.Pose(min_detection_confidence=0.5,min_tracking_confidence=0.5)
-
-    # print(type(pose))
-    # print(dir(pose))
-
-    #pose.close()
-
-    #test_count = 0
-
-    # while test_count < 10:
-    #     test_count += 1
-
-    #with pose1 as pose:
-
-        # if camera_run == 0:
-        #     pose.close()
-            #pose.close()#self.pose.close()
-
-        
+        # Timer        
         timer_print()
         
 
@@ -499,15 +371,12 @@ def image(getdata_image):
         results = pose.process(frame)
 
         # send the output for analysis
+
         # gettheposelandmarks = results.pose_landmarks
         # gettheposeworldlandmarks = results.pose_world_landmarks
         # gettheposeconnections = mp_pose.POSE_CONNECTIONS
         analyze(results.pose_landmarks, results.pose_world_landmarks, mp_pose.POSE_CONNECTIONS)
 
-
-        
-
-        
         # Draw the pose annotation on the image.
         frame.flags.writeable = True
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
@@ -517,10 +386,11 @@ def image(getdata_image):
             mp_pose.POSE_CONNECTIONS,
             landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
 
-        
+        #if text should be added to the video
 
-        #frame = changeLipstick(frame,[255,0,0])
         #frame = ps.putBText(frame,text,text_offset_x=20,text_offset_y=30,vspace=20,hspace=10, font_scale=1.0,background_RGB=(10,20,222),text_RGB=(255,255,255))
+        
+        # CV2 to jpeg
         imgencode = cv2.imencode('.jpeg', frame,[cv2.IMWRITE_JPEG_QUALITY,40])[1]
 
         # base64 encode
@@ -541,51 +411,6 @@ def image(getdata_image):
             fps_array=[fps]
             cnt=0
 
- 
-'''
-def gen(video):
-    with mp_pose.Pose(
-        min_detection_confidence=0.5,
-        min_tracking_confidence=0.5) as pose:
-        while video.isOpened():
-            success, image = video.read()
-            if not success:
-                print("Ignoring empty camera frame.")
-                # If loading a video, use 'break' instead of 'continue'.
-                continue
-
-            # To improve performance, optionally mark the image as not writeable to
-            # pass by reference.
-            image.flags.writeable = False
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            results = pose.process(image)
-
-            # Draw the pose annotation on the image.
-            image.flags.writeable = True
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-            mp_drawing.draw_landmarks(
-                image,
-                results.pose_landmarks,
-                mp_pose.POSE_CONNECTIONS,
-                landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
-
-            ret, jpeg = cv2.imencode('.jpg', image)
-            frame = jpeg.tobytes()
-            yield (b'--frame\r\n'
-                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-'''
-       
-
-'''
-@app.route('/video_feed')
-def video_feed():
-    global video
-    #return Response(gen(video), mimetype='multipart/x-mixed-replace; boundary=frame')
-    socketio.emit('video_socket', {'videodata': gen(video)})
-
-'''
-
-    
 
 if __name__ == '__main__':
     #app.run(host='0.0.0.0', port=2204, threaded=True)
