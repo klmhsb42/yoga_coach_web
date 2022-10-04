@@ -41,7 +41,7 @@ gTTS is based on ...
 
 ### EDA and calculation of angles
 
-...
+The EDA of the returned pose landmarks is documented in [this](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/analysis.ipynb) Jupyter Notebook. Furthermore, how the angles were calculated and compared between correct and wrong pose by one example exercise.
 
 ## How to add new exercises
 
