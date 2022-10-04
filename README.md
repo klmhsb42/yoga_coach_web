@@ -47,11 +47,11 @@ The EDA of the returned pose landmarks is documented in [this](https://github.co
 
 ### Collect data
 
-Collect data of your body pose
+First, you need to collect data of your body pose. For that, you can use [gather.py](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/gather.py) by running `python gather.py` inside the `yoga_coach_web/artifacts/` folder. Your webcam will open and start capturing your body pose landmarks per frame and save them as JSON file under `yoga_coach_web/artifacts/collect/` folder. To gather correct landmarks, place your computer so that your full body is visible in the webcam and then, perform the excersice correctly. You can stop the script by pressing `Ctrl + C`.
 
 ### Select correct data
 
-You can plot the landmarks.
+Next, you need to select one body pose with the landmarks represting this excersice best. To select the right one, you can plot the landmarks using [plot.py](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/plot.py). For that, run `python plot.py` inside the `yoga_coach_web/artifacts/` folder.
 
 ### Calculate angles
 
