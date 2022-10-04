@@ -6,7 +6,9 @@ A computer vision based yoga coach web app
 
 ## About
 
-*Yoga Coach web* is a web app that allows you to record your body pose with your webcam and will give you feedback how good your doing on a certain exercise based on coputer vision analysis. This app was developed as my final project during the data science bootcamp at [Spiced Academy](https://www.spiced-academy.com/de/program/data-science) in Berlin. If you don't want to setup by yourself, you can have a look at the [screenshots](#) or the [presentation](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/docs/presentation.pdf).
+*Yoga Coach web* is a web app that allows you to record your body pose with your webcam and will give you feedback how good your doing on a certain exercise based on coputer vision analysis. This app was developed as my final project during the data science bootcamp at [Spiced Academy](https://www.spiced-academy.com/de/program/data-science) in Berlin. If you don't want to setup by yourself, you can have a look at the [screenshots](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/screenshots/) or the [presentation](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/docs/presentation.pdf).
+
+![userinterface](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/screenshots/userinterface.png)
 
 ## Credits
 
