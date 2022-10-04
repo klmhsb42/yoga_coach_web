@@ -55,9 +55,9 @@ Next, you need to select one body pose with the landmarks represting this excers
 
 ### Calculate angles
 
-...
+To calculate the angles of these correct pose landmarks you can use [angles.py](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/angles.py) by running `python angles.py` inside the `yoga_coach_web/artifacts/` folder. This will print an array of angle values inside the terminal. Copy this array and insert it in the following step.
 
-### Insert data
+### Add new exercises and insert data
 
 ...
 
