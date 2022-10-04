@@ -1,16 +1,16 @@
 # Yoga Coach web
 
-A coputer vision based yoga coach web app
+A computer vision based yoga coach web app
 
 ![logo](https://github.com/klmhsb42/yoga_coach_web/blob/main/static/img/logo.svg)
 
-## Abstract
+## About
 
 *Yoga Coach web* is a web app that allows you to record your body pose with your webcam and will give you feedback how good your doing on a certain exercise based on coputer vision analysis. This app was developed as my final project during the data science bootcamp at [Spiced Academy](https://www.spiced-academy.com/de/program/data-science) in Berlin. If you don't want to setup by yourself, you can have a look at the screenshots.
 
 ## Credits
 
-I thank all [people from Spiced Academy](https://www.spiced-academy.com/de/about) that supported me. Images for exercises were taken from [commons.wikimedia.org](https://commons.wikimedia.org/). The respective URL and date of access are shown in the app. Descriptions of exercises are taken from the [en.wikipedia.org](https://en.wikipedia.org/wiki/) JSON API and a respective link given to further read the article. The video stream processing was followed from the MediaPipe Pose [python API](https://google.github.io/mediapipe/solutions/pose.html) and [this](https://pyshine.com/Online-Video-Processing-From-Client-Camera/) pyshine tutorial.
+I thank all people from [Spiced Academy](https://www.spiced-academy.com/de/about) and [Bundesagentur f&uuml;r Arbeit](https://www.arbeitsagentur.de/) that supported me. Images for exercises were taken from [commons.wikimedia.org](https://commons.wikimedia.org/). The respective URL and date of access are shown in the app. Descriptions of exercises are taken from the [en.wikipedia.org](https://en.wikipedia.org/wiki/) JSON API and a respective link given to further read the article. The video stream processing was followed from the MediaPipe Pose [python API](https://google.github.io/mediapipe/solutions/pose.html) and [this](https://pyshine.com/Online-Video-Processing-From-Client-Camera/) pyshine tutorial.
 
 ## How to setup
 

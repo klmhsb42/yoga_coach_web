@@ -257,7 +257,7 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
 def feedback_score(correctness):
     global score, scoremax
 
-    score = 10 - (correctness/10)
+    score = correctness / 10
 
     if score >= 8:
         score_message = 'correct'
