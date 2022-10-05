@@ -391,12 +391,17 @@ def image(getdata_image):
 
         #frame = ps.putBText(frame,text,text_offset_x=20,text_offset_y=30,vspace=20,hspace=10, font_scale=1.0,background_RGB=(10,20,222),text_RGB=(255,255,255))
         
+        #flip
+        frame = cv2.flip(frame, 1)
+
         # CV2 to jpeg
-        imgencode = cv2.imencode('.jpeg', frame,[cv2.IMWRITE_JPEG_QUALITY,40])[1]
+        imgencode = cv2.imencode('.jpeg', frame,[cv2.IMWRITE_JPEG_QUALITY,100])[1]
+        # imgencode = cv2.imencode('.png', frame,[cv2.IMWRITE_PNG_COMPRESSION, 9])[1]
 
         # base64 encode
         stringData = base64.b64encode(imgencode).decode('utf-8')
         b64_src = 'data:image/jpeg;base64,'
+        # b64_src = 'data:image/png;base64,'
         stringData = b64_src + stringData
 
         # emit the frame back

@@ -173,7 +173,8 @@ function starttheinterval(interval_status){
         width=videoDiv.width;
         height=videoDiv.height;
         context.drawImage(videoDiv, 0, 0, width , height );
-        var data = canvas.toDataURL('image/jpeg', 0.5);
+        var data = canvas.toDataURL('image/jpeg', 1.0); //before 0.5
+        // var data = canvas.toDataURL('image/png', 1.0);
         context.clearRect(0, 0, width,height );
         socket.emit('image', [data,1]);
     }, 1000/FPS);

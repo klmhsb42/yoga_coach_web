@@ -10,8 +10,11 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
 framecount = 0
-path_train_save = 'collect/img/'
-create_folder = 'collect'
+path_train_save = 'collect/img/' # could also use image_path
+create_folder = 'collect' # to correct!!!
+excercises_cat = '0'
+excercises_num = '6'
+image_path = '../static/excercises/'+excercises_cat+'/'+excercises_num+'/'
 
 #set_landmark_mode = 'pose_world_landmarks' # or 'pose_landmarks'
 
@@ -35,7 +38,7 @@ def gather():
         # If loading a video, use 'break' instead of 'continue'.
         # continue
 
-      image = cv2.imread('../static/excercises/0/6/yoga-7.jpg',0)
+      image = cv2.imread(image_path+'yoga.jpg',0)
 
       # To improve performance, optionally mark the image as not writeable to
       # pass by reference.
@@ -102,7 +105,7 @@ def gather():
             landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style())
         # Flip the image horizontally for a selfie-view display.
         cv2.imshow('MediaPipe Pose', cv2.flip(image, 1))
-        cv2.imwrite('../static/excercises/0/6/yoga-7_pose.jpg', image)
+        cv2.imwrite(image_path+'yoga_pose.jpg', image)
         # if cv2.waitKey(5) & 0xFF == 27:
         #   break
   #cap.release()

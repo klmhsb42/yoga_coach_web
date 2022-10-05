@@ -5,7 +5,7 @@
             "exercise": [
                 {
                     "title": "Tree with arms up",
-                    "img": "static/excercises/0/1/yoga-2.jpg",
+                    "img": "static/excercises/0/1/yoga-mirror.jpg",
                     "img-origin": "https://commons.wikimedia.org/wiki/File:Vriksasana_Yoga-Asana_Nina-Mel.jpg",
                     "img-date": "03/10/2022",
                     "description-api": "Vriksasana",
@@ -14,7 +14,7 @@
                 },
                 {
                     "title": "Lord of the dance",
-                    "img": "static/excercises/0/2/yoga-3.jpg",
+                    "img": "static/excercises/0/2/yoga-mirror.jpg",
                     "img-origin": "https://commons.wikimedia.org/wiki/File:Mr-yoga-lord_of_dance_4.jpg",
                     "img-date": "03/10/2022",
                     "description-api": "Natarajasana",
@@ -23,7 +23,7 @@
                 },
                 {
                     "title": "Half boat",
-                    "img": "static/excercises/0/3/yoga-4.jpg",
+                    "img": "static/excercises/0/3/yoga.jpg",
                     "img-origin": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Mr-yoga-boat-pose2.jpg",
                     "img-date": "03/10/2022",
                     "description-api": "Navasana",
@@ -32,7 +32,7 @@
                 },
                 {
                     "title": "Sunbird Pose",
-                    "img": "static/excercises/0/5/yoga-6.jpg",
+                    "img": "static/excercises/0/5/yoga.jpg",
                     "img-origin": "https://commons.wikimedia.org/wiki/File:Home_yoga_workout.jpg",
                     "img-date": "03/10/2022",
                     "description-api": "Bidalasana",
@@ -41,7 +41,7 @@
                 },
                 {
                     "title": "Warrior II",
-                    "img": "static/excercises/0/6/yoga-7.jpg",
+                    "img": "static/excercises/0/6/yoga.jpg",
                     "img-origin": "https://commons.wikimedia.org/wiki/File:Yoga_(9707548938).jpg",
                     "img-date": "03/10/2022",
                     "description-api": "Virabhadrasana",

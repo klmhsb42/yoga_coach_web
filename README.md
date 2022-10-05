@@ -14,15 +14,16 @@ A computer vision based yoga coach web app
 
 I thank all people from [Spiced Academy](https://www.spiced-academy.com/de/about) and [Bundesagentur f&uuml;r Arbeit](https://www.arbeitsagentur.de/) that supported me. Images for exercises were taken from [commons.wikimedia.org](https://commons.wikimedia.org/). The respective URL and date of access are shown in the app. Descriptions of exercises are taken from the [en.wikipedia.org](https://en.wikipedia.org/wiki/) JSON API and a respective link given to further read the article. The video stream processing was followed from the MediaPipe Pose [python API](https://google.github.io/mediapipe/solutions/pose.html) and [this](https://pyshine.com/Online-Video-Processing-From-Client-Camera/) pyshine tutorial.
 
-## How to setup
+## How to setup (Linux)
 
-1) Create a virtual envrionment e.g. with [Anaconda](https://www.anaconda.com/): `conda create --name yogacoach`
-2) Update pip in the virtual envrionment: `python -m pip install -U pip`
-3) Install required python packages inside the virtual envrionment: `pip install`
-4) Clone the repository: `git clone https://github.com/klmhsb42/yoga_coach_web.git`
-5) Go inside the repository folder: `cd yoga_coach_web`
-6) Run the app: `python app.py`
-7) Close the app: `Ctrl + C`
+1) Go to folder you want to have it, e.g. home with: `cd ~/`
+2) Clone the repository: `git clone https://github.com/klmhsb42/yoga_coach_web.git`
+3) Go inside the repository folder: `cd yoga_coach_web`
+4) Create a virtual envrionment e.g. with [Anaconda](https://www.anaconda.com/): `conda create --name yogacoach`
+5) Update pip in the virtual envrionment: `python -m pip install -U pip`
+6) Install required python packages inside the virtual envrionment: `pip install -r requirements.txt`
+7) Run the app: `python app.py`
+8) Close the app: `Ctrl + C`
 
 ## How to use
 
