@@ -20,10 +20,12 @@ I thank all people from [Spiced Academy](https://www.spiced-academy.com/de/about
 2) Clone the repository: `git clone https://github.com/klmhsb42/yoga_coach_web.git`
 3) Go inside the repository folder: `cd yoga_coach_web`
 4) Create a virtual envrionment e.g. with [Anaconda](https://www.anaconda.com/): `conda create --name yogacoach`
-5) Update pip in the virtual envrionment: `python -m pip install -U pip`
-6) Install required python packages inside the virtual envrionment: `pip install -r requirements.txt`
-7) Run the app: `python app.py`
-8) Close the app: `Ctrl + C`
+5) Activate the virtual envrionment: `conda activate yogacoach`
+6) Update pip in the virtual envrionment: `python -m pip install -U pip`
+7) Install required python packages inside the virtual envrionment: `pip install -r requirements.txt`
+8) Run the app: `python app.py`
+9) Close the app: `Ctrl + C`
+10) To re-run go to 8), you might have to activate the virtual envrionment again if you are in a new terminal.
 
 ## How to use
 
