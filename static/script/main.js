@@ -5,7 +5,7 @@
 
       /* TESTS */
       
-      
+     
       
       
       var socket = io.connect(window.location.protocol + '//' + document.domain + ':' + location.port);
@@ -50,23 +50,26 @@
       }
 
 
-      $("#hide-popup").click(function(){
+      $("#hide-popup").click(function(e){
+        e.preventDefault();
         $("#popup-container").hide();
       });
       
-      $("#show-popup").click(function(){
+      $("#show-popup").click(function(e){
+        e.preventDefault();
         $("#popup-container").show();
       }); 
 
       
 
-      $("#show-popup-inner").click(function(){
+      $("#show-popup-inner").click(function(e){
+        e.preventDefault();
         $("#popup-container-inner").show();
         $("#popup-container-inner-cat").hide();
       }); 
 
-      $("#hide-popup-inner").click(function(){
-        
+      $("#hide-popup-inner").click(function(e){
+        e.preventDefault();
         $("#popup-container-inner-cat").show();
         $("#popup-container-inner").hide();
       }); 

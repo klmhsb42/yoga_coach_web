@@ -57,16 +57,25 @@
         
     <div  id="popup-container-inner">
 
-<a class="" id="hide-popup-inner">Back</a>
-    <br>
+<a class="" id="hide-popup-inner" style="cursor: pointer;">&#10096; Back</a>
+    <br><br>
+
     {% for showlist_exercise in exercises_data['category'][0]['exercise'] %}
   
-    <div class="">{{loop.index}} / {{loop.length}} {{ showlist_exercise['title'] }}</div>
-    <div class="">
-    <img width="25px" src="{{ showlist_exercise['img'] }}">
-    </div>
-    <div class="">{{ showlist_exercise['description'] }}</div>
- 
+    <div class="" style="background-color: #ddd; margin-top: 2%; display: flex; color: black; box-shadow: 0px 0px 8px #000;">
+      
+      <div class="" style="background-color: #bbb; width: 20%; padding: 2%;">
+        <span class="" >{{loop.index}} / {{loop.length}} {{ showlist_exercise['title'] }}</span>
+        <br>
+        <span class="">
+          <img height="100px" src="{{ showlist_exercise['img'] }}">
+          </span>
+    
+  </div>
+    <div class="" style="width: 80%; padding: 2%;">{{ showlist_exercise['description'] }}</div>
+    
+  </div>
+
   {% endfor %}
   </div>
 </div>

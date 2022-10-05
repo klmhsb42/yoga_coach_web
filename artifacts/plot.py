@@ -15,7 +15,7 @@ mp_pose = mp.solutions.pose
 #_PRESENCE_THRESHOLD = 0.5
 _VISIBILITY_THRESHOLD = 0.5
 
-filemode = 1 # 1 = 'pose_world_landmarks' and 0 = 'pose_landmarks'
+filemode = 0 # 1 = 'pose_world_landmarks' and 0 = 'pose_landmarks'
 mypath = 'collect/img/'+str(filemode)+'/'
 onlyfiles = [f for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))]
 
