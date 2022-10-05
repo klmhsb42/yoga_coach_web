@@ -240,7 +240,7 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
         list_of_angle_diff_length = len(list(df_angle_global['diff_per100_abs']))
 
         # How much difference in % is allowed between correct and current angle
-        angle_threshold = 5
+        angle_threshold = 7
 
         # How many angles are below this threshold
         list_of_angle_diff_threshold = sum(i < angle_threshold for i in list(df_angle_global['diff_per100_abs']))
@@ -258,6 +258,7 @@ def feedback_score(correctness):
     global score, scoremax
 
     score = correctness / 10
+    score = int(score)
 
     if score >= 8:
         score_message = 'correct'

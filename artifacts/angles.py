@@ -12,7 +12,7 @@ df_angle_matrix = pd.read_csv('angles.csv', sep=',')
 
 df_angle_matrix_global = df_angle_matrix.copy(deep=True)
 
-f_landmarks = open('example/half_boat_wrong.json')
+f_landmarks = open('collect/img/0/pose_landmarks0.json')
 gettheposelandmarks = json.load(f_landmarks)
 f_landmarks.close()
 
