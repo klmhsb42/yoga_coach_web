@@ -176,7 +176,7 @@ function starttheinterval(interval_status){
         width=videoDiv.width;
         height=videoDiv.height;
         context.drawImage(videoDiv, 0, 0, width , height );
-        var data = canvas.toDataURL('image/jpeg', 1.0); //before 0.5
+        var data = canvas.toDataURL('image/jpeg', 1.0); //before it was 0.5
         // var data = canvas.toDataURL('image/png', 1.0);
         context.clearRect(0, 0, width,height );
         socket.emit('image', [data,1]);
@@ -196,14 +196,6 @@ function starttheinterval(interval_status){
 
 
 socket.on('audio_socket', function(data) {
-  //console.log(data.audio_url);
-  //new Audio(data.audiofile).play();
-  //createaudioFile(data.audio_url);
-
-  //url = data.audio_url
-  //filename = data.audiofile
-  //blobUrl = data.bloburl
-  
 
   var getaudio = $("#audio-player").get(0);
   getaudio.src = "";
@@ -215,19 +207,10 @@ socket.on('audio_socket', function(data) {
 });
 
 
-
+/*
 async function createaudioFile(path) {
-  // let response = await fetch(path);
-  // let data = await response.blob();
-  // let metadata = {
-  //   type: 'audio/mp3'
-  // };
-  // let file = new File([data], "speech.mp3", metadata);
-  // ... do something with the file or return it
-  // console.log(file);
-  // new Audio(file).play();
-  
-  // audio = file
+
+  console.log('audio fired')
 
   var importRes = await import(path);
   var audio = new Audio(importRes.default);
@@ -238,9 +221,10 @@ async function createaudioFile(path) {
   } catch (err) {
       console.log("Failed to play, error: " + err);
   }
+
 };
 
-
+*/
 
 
 
@@ -275,11 +259,13 @@ function showSlides(n) {
 
 
 
-$(".hide-exercise-description").click(function(){
+$(".hide-exercise-description").click(function(e){
+  e.preventDefault();
   $(".text").hide();
 });
 
-$(".show-exercise-description").click(function(){
+$(".show-exercise-description").click(function(e){
+  e.preventDefault();
   $(".text").show();
 }); 
 
@@ -290,9 +276,8 @@ $(".show-exercise-description").click(function(){
 function startProcess(){
     captureWebcam(true, false);
     starttheinterval(true);
-    var startdata = [slideIndex, slide_category, 1, 1]
+    var startdata = [slideIndex, slide_category, 1]
     socket.emit('run', startdata);
-    //get_audio();
     document.getElementById('button-start').disabled = true;
     document.getElementById('button-stop').disabled = false;
     document.getElementById('button-prev').disabled = true;
@@ -303,10 +288,15 @@ function stopProcess(){
     MediaStream.stop();
     starttheinterval(false);
     $("#photo").attr('src', '');
-    var startdata = [slideIndex, slide_category, 1, 0]
+    var startdata = [slideIndex, slide_category, 0]
     socket.emit('run', startdata);
     document.getElementById('button-start').disabled = false;
     document.getElementById('button-stop').disabled = true;
     document.getElementById('button-prev').disabled = false;
     document.getElementById('button-next').disabled = false;
 }
+
+socket.on('exercisestop', function(data) {
+  // console.log(data.stopetheexercise);
+  stopProcess();
+});

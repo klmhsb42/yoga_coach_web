@@ -53,9 +53,11 @@ framecount = 0
 
 # ***TIMER***
 
+timer_length = 3 # in minutes
 time_timer_started = datetime(1, 1, 1, 0, 0, 0)
-timer_diff = timedelta(minutes=3)
+timer_diff = timedelta(minutes=timer_length)
 time_timer_ended = datetime(1, 1, 1, 0, 0, 0)
+time_difference = timedelta(minutes=(timer_length+1))
 
 
 # ***EXERCISES***
@@ -64,6 +66,8 @@ exercise_id = 0
 category_id = 0
 scoremax = 0
 df_angle_matrix_global = pd.DataFrame()
+exercises_data = {}
+load_angles = pd.DataFrame()
 
 
 ##### TEST SOCKET #####
@@ -77,8 +81,12 @@ def connect():
 
 @app.route('/', methods=["GET"])
 def index():
+    global exercises_data, load_angles
+
     exercises_file = open('static/exercises.json',)
     exercises_data = json.load(exercises_file)
+
+    load_angles = pd.read_csv('static/angles.csv', sep=',')
 
     # add wikipedia text for description from the internet
     wikipedia_data = exercises_data
@@ -97,39 +105,33 @@ def index():
 
 @socketio.on('run')  
 def run(startdata):
-    global exercise_id, category_id, df_angle_matrix_global
+    global exercise_id, category_id, df_angle_matrix_global, exercises_data, load_angles
 
     exercise_id = startdata[0]
     category_id = startdata[1]
-    runthecode = startdata[2]
-    getrunthetimer = startdata[3]
+    run_state = startdata[2]
 
-    # if start button was pressed
-    if getrunthetimer == 1:
+    # if started in frontend
+    if run_state == 1:
 
-        #import of exercises.json also done in index, use global!!!
-
-        exercises_file = open('static/exercises.json',)
-        exercises_data = json.load(exercises_file)
-
-        # get correct angles of exercise and add to dataframe
+        # get correct angles of exercise and add to index dataframe
 
         exercise_id_low = exercise_id - 1
 
-        get_the_current_angle = exercises_data["category"][category_id]["exercise"][exercise_id_low]["angles"]
+        correct_angles_of_current_exercise = exercises_data["category"][category_id]["exercise"][exercise_id_low]["angles"]
 
-        df_angle_matrix = pd.read_csv('static/angles.csv', sep=',')
-        df_angle_matrix['angle_correct'] = get_the_current_angle
+        df_angle_matrix = load_angles.copy(deep=True)
+        df_angle_matrix['angle_correct'] = correct_angles_of_current_exercise
 
         df_angle_matrix_global = df_angle_matrix.copy(deep=True)
 
 
         #give start feedback
-        set_feedback_text = 'Welcome, happy to see you!'
+        set_feedback_text = 'Namasté, happy to see you!'
         feedback_text(set_feedback_text)
 
 
-        #then start the video analysis, or add some sleep or if/else
+        #start the analysis (triggered by the video) if start feedback is out (maybe with some sleep or if/else)
         #...
 
         
@@ -137,12 +139,9 @@ def run(startdata):
         timer_start()
 
 
-        
-        
-        
 
-    # if the stop button was pressed
-    elif getrunthetimer == 0:
+    # if stopped in frontend
+    elif run_state == 0:
         
         # stop timer
         timer_stop()
@@ -151,6 +150,10 @@ def run(startdata):
         set_feedback_text = "I'm happy that you did it! See you in the next exercise."
         feedback_text(set_feedback_text)
 
+
+# if stopped in backend, sent to frontend and stop from there
+def exercise_stop():
+    socketio.emit('exercisestop', {'stopetheexercise': True})
 
 
 
@@ -166,14 +169,47 @@ def angle_between(v1, v2):
     v2_u = unit_vector(v2)
     return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
 
+def calculate_angles(df_angle_global_array):
+    # Calculate and list angles
+    angle_list_current = []
+
+    for angle_cal in df_angle_global_array:
+        getangle = angle_between((angle_cal[0],angle_cal[1],angle_cal[2]), (angle_cal[3],angle_cal[4],angle_cal[5]))
+        getangle = getangle * (180/np.pi)
+        angle_list_current.append(getangle)
+    
+    return angle_list_current
+
+
+
 def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections):
-    global exercise_id, category_id, scoremax, df_angle_matrix_global
+    
+    df_keypoints = get_landmarks(gettheposelandmarks)
+
+    if isinstance(df_keypoints, pd.DataFrame):
+
+        
+        get_if_user_in_camera = is_user_in_camera(df_keypoints['visibility'])
+
+        get_df_angle_global = landmarks_to_angles(df_keypoints)
+        get_diff_per100_abs = calculate_angles_difference(get_df_angle_global)
+
+        get_the_instruction = create_instruction(get_if_user_in_camera, get_diff_per100_abs)
+
+        # send feedback about instruction
+        if get_the_instruction != False:
+            feedback_text(get_the_instruction)
+
+        get_correctness = calculate_score(get_diff_per100_abs)
+        # send feedback about score
+        feedback_score(get_correctness)
 
 
+def get_landmarks(gettheposelandmarks):
+    
     # if landmarks are set for current pose
     if hasattr(gettheposelandmarks, 'landmark'):
         
-
         # get landmarks of current pose
         keypoints = []
         for data_point in gettheposelandmarks.landmark:
@@ -184,75 +220,128 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
                                 'visibility': data_point.visibility,
                                 })
 
-        #pre-analysis of feedback, if ready to start (most visible)
-        #...
-
         # current landmarks to dataframe
         df_keypoints = pd.DataFrame(keypoints)
+        return df_keypoints
+    else:
+        return False
 
-        # this dataframe matrix contains the correct angles
-        df_angle_global = df_angle_matrix_global.copy(deep=True)
 
-        # Merge X,Y,Z to the respective indicies
-        df_angle_global = df_angle_global.merge(df_keypoints, how="left", left_on='vector_1_idx', right_on=df_keypoints.index)
-        df_angle_global.rename(columns={'z':'vector_1_z','x':'vector_1_x','y':'vector_1_y'}, inplace=True)
 
-        df_angle_global = df_angle_global.merge(df_keypoints, how="left", left_on='vector_2_idx', right_on=df_keypoints.index)
-        df_angle_global.rename(columns={'z':'vector_2_z','x':'vector_2_x','y':'vector_2_y'}, inplace=True)
 
-        df_angle_global = df_angle_global.merge(df_keypoints, how="left", left_on='join_idx', right_on=df_keypoints.index)
-        df_angle_global.rename(columns={'z':'join_z','x':'join_x','y':'join_y'}, inplace=True)
 
-        # Get X,Y,Z of connectors
-        df_angle_global['connector_1_x'] = df_angle_global['vector_1_x'] - df_angle_global['join_x']
-        df_angle_global['connector_1_y'] = df_angle_global['vector_1_y'] - df_angle_global['join_y']
-        df_angle_global['connector_1_z'] = df_angle_global['vector_1_z'] - df_angle_global['join_z']
+def landmarks_to_angles(df_keypoints):
 
-        df_angle_global['connector_2_x'] = df_angle_global['vector_2_x'] - df_angle_global['join_x']
-        df_angle_global['connector_2_y'] = df_angle_global['vector_2_y'] - df_angle_global['join_y']
-        df_angle_global['connector_2_z'] = df_angle_global['vector_2_z'] - df_angle_global['join_z']
+    # this dataframe matrix contains the correct angles
+    df_angle_global = df_angle_matrix_global.copy(deep=True)
 
-        # Make array of connector coordinates
-        df_angle_global_array = df_angle_global[['connector_1_z','connector_1_x','connector_1_y','connector_2_z','connector_2_x','connector_2_y']].to_numpy()
+    # Merge X,Y,Z to the respective indicies
+    df_angle_global = df_angle_global.merge(df_keypoints, how="left", left_on='vector_1_idx', right_on=df_keypoints.index)
+    df_angle_global.rename(columns={'z':'vector_1_z','x':'vector_1_x','y':'vector_1_y'}, inplace=True)
 
-        # Calculate and list angles
-        angle_list_current = []
+    df_angle_global = df_angle_global.merge(df_keypoints, how="left", left_on='vector_2_idx', right_on=df_keypoints.index)
+    df_angle_global.rename(columns={'z':'vector_2_z','x':'vector_2_x','y':'vector_2_y'}, inplace=True)
 
-        for angle_cal in df_angle_global_array:
-            getangle = angle_between((angle_cal[0],angle_cal[1],angle_cal[2]), (angle_cal[3],angle_cal[4],angle_cal[5]))
-            getangle = getangle * (180/np.pi)
-            angle_list_current.append(getangle)
+    df_angle_global = df_angle_global.merge(df_keypoints, how="left", left_on='join_idx', right_on=df_keypoints.index)
+    df_angle_global.rename(columns={'z':'join_z','x':'join_x','y':'join_y'}, inplace=True)
 
-        df_angle_global['angle_current'] = angle_list_current
+    # Get X,Y,Z of connectors
+    df_angle_global['connector_1_x'] = df_angle_global['vector_1_x'] - df_angle_global['join_x']
+    df_angle_global['connector_1_y'] = df_angle_global['vector_1_y'] - df_angle_global['join_y']
+    df_angle_global['connector_1_z'] = df_angle_global['vector_1_z'] - df_angle_global['join_z']
 
-        # Calculate the difference between correct and current angles
-        df_angle_global['diff'] = df_angle_global['angle_correct'] - df_angle_global['angle_current']
+    df_angle_global['connector_2_x'] = df_angle_global['vector_2_x'] - df_angle_global['join_x']
+    df_angle_global['connector_2_y'] = df_angle_global['vector_2_y'] - df_angle_global['join_y']
+    df_angle_global['connector_2_z'] = df_angle_global['vector_2_z'] - df_angle_global['join_z']
 
-        df_angle_global['diff_per100'] = (df_angle_global['diff'] / 180) * 100
+    # Make array of connector coordinates
+    df_angle_global_array = df_angle_global[['connector_1_z','connector_1_x','connector_1_y','connector_2_z','connector_2_x','connector_2_y']].to_numpy()
 
-        df_angle_global['diff_per100_abs'] = abs(df_angle_global['diff_per100'])
+    # Calculate and list angles
+    angle_list_current = calculate_angles(df_angle_global_array)
 
-        # Here create some text for feedback
-        # set_feedback_text = 'Please, raise your right arm 10% higher.'
-        # feedback_text(set_feedback_text)
+    df_angle_global['angle_current'] = angle_list_current
 
-        # Calculations imoprtant for score
-        list_of_angle_diff_length = len(list(df_angle_global['diff_per100_abs']))
+    return df_angle_global
+    
 
-        # How much difference in % is allowed between correct and current angle
-        angle_threshold = 7
 
-        # How many angles are below this threshold
-        list_of_angle_diff_threshold = sum(i < angle_threshold for i in list(df_angle_global['diff_per100_abs']))
+def calculate_angles_difference(df_angle_global):
+    # Calculate the difference between correct and current angles
+    df_angle_global['diff'] = df_angle_global['angle_correct'] - df_angle_global['angle_current']
 
-        # How much in %
-        correctness = list_of_angle_diff_threshold / list_of_angle_diff_length * 100
+    df_angle_global['diff_per100'] = (df_angle_global['diff'] / 180) * 100
 
-        # send feedback about score
-        feedback_score(correctness)
+    df_angle_global['diff_per100_abs'] = abs(df_angle_global['diff_per100'])
+
+    diff_per100_abs = df_angle_global['diff_per100_abs']
+
+    return diff_per100_abs
+    
+
+
+
+def calculate_score(diff_per100_abs):
+    # Calculations imoprtant for score
+    list_of_angle_diff_length = len(list(diff_per100_abs))
+
+    # How much difference in % is allowed between correct and current angle
+    angle_threshold = 7
+
+    # How many angles are below this threshold
+    list_of_angle_diff_threshold = sum(i < angle_threshold for i in list(diff_per100_abs))
+
+    # How much in %
+    correctness = list_of_angle_diff_threshold / list_of_angle_diff_length * 100
+
+    return correctness
+
+
+
+
+def is_user_in_camera(visibility_df_series):
+
+    #check if the user is in the camera
+
+    if 1 == 1:
+        return True
+    else:
+        return False
+
+
+def user_in_camera_time_sufficient():
+
+    #check if user was in the camera for enough time
+
+    if 1 == 1:
+        return True
+    else:
+        return False
+
+
+
 
 
 ##### FEEDBACK #####
+
+
+def create_instruction(get_if_user_in_camera, diff_per100_abs):
+
+    # if the user is not completely in the camera since the start, then tell it once,
+    # if the user is at least once completely in the camera, then start the timer,
+    # if the user is not completely in the camera for too long time, then tell it again
+    # if the user is completely in the camera for enough time, then start to give detailed instructions
+
+    if get_if_user_in_camera == True:
+        #create detailed instructions based on diff_per100_abs
+        the_instruction = 'Please, raise your right arm 10% higher.'
+    else:
+        the_instruction = 'I can not see you.'
+
+    #return the_instruction
+    return False
+    
+
 
 def feedback_score(correctness):
     global score, scoremax
@@ -276,8 +365,9 @@ def feedback_score(correctness):
     if score > scoremax:
         scoremax = score
         socketio.emit('score_max', {'score_max_val': scoremax, 'score_max_message': score_max_message, 'score_max_color': score_max_color})
-        set_feedback_text = 'New score, good job!'
-        feedback_text(set_feedback_text)
+        if scoremax > 8:
+            set_feedback_text = 'New score, good job!'
+            feedback_text(set_feedback_text)
         
 
 def feedback_text(feedback_text):
@@ -292,27 +382,32 @@ def timer_start():
     time_timer_started = datetime.now()
 
 
-def timer_print():
-    global time_timer_started, timer_diff
+def timer_print(time_countdown):
+        mins, secs = divmod(time_countdown, 60)
+        timerstr = '{:02d}:{:02d}'.format(mins, secs)
+        socketio.emit('timer_socket', {'time': timerstr})
+
+def timer_diff_func():
+    global time_timer_started, timer_diff, time_difference
 
     time_difference = datetime.now() - time_timer_started
     #time_difference_seconds = time_difference.seconds
     time_countdown = timer_diff.seconds - time_difference.seconds
 
     if time_difference <= timer_diff:
-        mins, secs = divmod(time_countdown, 60)
-        timerstr = '{:02d}:{:02d}'.format(mins, secs)
-        socketio.emit('timer_socket', {'time': timerstr})
+        return True, time_countdown
     else:
-        timer_stop()
+        return False, time_countdown
 
  
 def timer_stop():
-    global time_timer_started, time_timer_ended
-    time_timer_started = datetime(1, 1, 1, 0, 0, 0)
-    time_timer_ended = datetime.now()
-    timerstr = '{:02d}:{:02d}'.format(0, 0)
-    socketio.emit('timer_socket', {'time': timerstr})
+    global time_timer_started, time_timer_ended, time_difference, timer_length
+    #time_timer_started = datetime(1, 1, 1, 0, 0, 0) # set to 0 min 0 sec so that the time_difference is 0
+    time_difference = timedelta(minutes=(timer_length+1))
+    time_timer_ended = datetime.now() # not used yet
+    timer_print(0)
+    #timerstr = '{:02d}:{:02d}'.format(0, 0)
+    #socketio.emit('timer_socket', {'time': timerstr})
 
 
 ##### AUDIO #####
@@ -361,8 +456,12 @@ def image(getdata_image):
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5) as pose:
 
-        # Timer        
-        timer_print()
+        # Timer 
+        timer_state, timer_num = timer_diff_func()    
+        if timer_state == True:   
+            timer_print(timer_num)
+        elif timer_state == False:
+            exercise_stop()
         
 
         recv_time = time.time()
