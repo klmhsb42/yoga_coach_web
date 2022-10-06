@@ -209,10 +209,10 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
     global user_in_camera_once
 
     # if the user was at least once completely in the camera, start the timer
-    if user_in_camera_once == 1:
-        #timer_start()
-        set_feedback_text = 'Timer started'
-        feedback_text(set_feedback_text)
+    # if user_in_camera_once == 1:
+        # timer_start()
+        # set_feedback_text = 'Timer started'
+        # feedback_text(set_feedback_text)
 
     # start analysis
     
@@ -221,7 +221,7 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
     if isinstance(df_keypoints, pd.DataFrame):
 
         
-        is_user_in_camera(df_keypoints['visibility'])
+        is_user_in_camera(list(df_keypoints['visibility']))
 
         get_df_angle_global = landmarks_to_angles(df_keypoints)
         get_diff_per100_abs = calculate_angles_difference(get_df_angle_global)
@@ -338,11 +338,52 @@ def is_user_in_camera(visibility_df_series):
 
     global user_in_camera_once, user_not_in_camera
 
-    #check if the user is in the camera completely (distinguish between this and empty camera)
+    #check if the user is in the camera completely (distinguish between this and empty camera = no landmarks; to do)
 
-    #use >>visibility_df_series<< which is >>df_keypoints['visibility']<<
+    
+    # group numbers: 0 = head; 1 = left arm; 2 = right arm; 3 = chest; 4 = left leg; 5 = right leg
+    # values of groups represent the indices of visibility_df_series (= pose index 0-32)
 
-    if 1 == 1:
+    # landmark_grps = {
+    #     "0": [0,1,2,3,4,5,6,7,8,9,10],
+    #     "1": [13,15,17,19,21],
+    #     "2": [14,16,18,20,22],
+    #     "3": [11,12,23,24],
+    #     "4": [25,27,29,31],
+    #     "5": [26,28,30,32],
+    # }
+
+    # index in template represents index in visibility_df_series
+    groupby_index_template = [0,0,0,0,0,0,0,0,0,0,0,3,3,1,2,1,2,1,2,1,2,1,2,3,3,4,5,4,5,4,5,4,5]
+
+    # fill dict with values regarding indices
+    groupby_index_dict = {
+        "0": [],
+        "1": [],
+        "2": [],
+        "3": [],
+        "4": [],
+        "5": [],
+    }
+
+    
+    for visibility_df_series_idx, visibility_df_series_value in enumerate(visibility_df_series):
+        get_the_group_num = str(groupby_index_template[visibility_df_series_idx])
+        groupby_index_dict[get_the_group_num].append(visibility_df_series_value)
+
+    # check for each group if there is at least one landmark more visible than the threshold
+    set_visibility_threshold = 0.5 # 50 % visibility
+
+    groupby_index_results = []
+
+    for groupby_index_dict_entry in groupby_index_dict.values():
+        if any(groupby_index_dict_entry_val > set_visibility_threshold for groupby_index_dict_entry_val in groupby_index_dict_entry):
+            groupby_index_results.append(True)
+        else:
+            groupby_index_results.append(False)
+
+    # if this is true for all groups
+    if all(groupby_index_results) == True:
         user_in_camera_once = user_in_camera_once + 1
         return True
     else:
@@ -356,9 +397,9 @@ def user_in_camera_time_sufficient():
 
     global user_not_in_camera
 
-    #check if user was in the camera for enough time (here 10 * seconds per frame (30 sec?) = ... sec)
+    #check if user was in the camera for enough time (here 5 * seconds per frame (30 sec?) = ... sec)
 
-    if user_not_in_camera > -10:
+    if user_not_in_camera > -5:
         return True
     else:
         # reset user_not_in_camera count
@@ -384,9 +425,13 @@ def create_instruction(diff_per100_abs):
         # create detailed instructions like 'Please, raise your right arm a bit higher.'
         # use >>diff_per100_abs<<
         the_instruction = 'Please, change your body pose.' 
+        the_instruction = False
     # if the user is not completely in the camera since the start OR for too much time
     elif user_in_camera_once == 0 or get_user_in_camera_time_sufficient == False:
         the_instruction = 'I can not see you.'
+    # no instruction
+    else:
+        the_instruction = False
 
     return the_instruction
     
@@ -519,15 +564,21 @@ def image(getdata_image):
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5) as pose:
 
+        
+
         # if Timer could have been started
         if user_in_camera_once != 0:
-
-            # check Timer 
-            timer_state, timer_num = timer_diff_func()    
-            if timer_state == True:   
-                timer_print(timer_num)
-            elif timer_state == False:
-                exercise_stop()
+            if user_in_camera_once == 1:
+                print('function on fire')
+                set_feedback_text = 'Timer started'
+                feedback_text(set_feedback_text)
+            else:
+                # check Timer 
+                timer_state, timer_num = timer_diff_func()    
+                if timer_state == True:   
+                    timer_print(timer_num)
+                elif timer_state == False:
+                    exercise_stop()
         
 
         recv_time = time.time()
