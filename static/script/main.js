@@ -202,9 +202,24 @@ socket.on('audio_socket', function(data) {
   getaudio.src = "static/audio/feedback.mp3";
 
   getaudio.load();
+
+  var duration = getaudio.duration;
+  console.log(duration);
+  duration = 7000 //7 sec
+
   getaudio.play();
 
+
+  setTimeout(function() {
+    tell_ready_for_next_feedback();
+  }, duration); 
+
 });
+
+
+function tell_ready_for_next_feedback() {
+  socket.emit('feedback_waiting_loop', 'True');
+}
 
 
 /*

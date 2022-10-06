@@ -69,6 +69,17 @@ df_angle_matrix_global = pd.DataFrame()
 exercises_data = {}
 load_angles = pd.DataFrame()
 
+# ***ANALYSIS***
+
+user_in_camera_once = 0
+user_not_in_camera = 0
+
+
+# ***FEEDBACK***
+
+ready_for_next_feedback = True
+
+
 
 ##### TEST SOCKET #####
 
@@ -105,7 +116,7 @@ def index():
 
 @socketio.on('run')  
 def run(startdata):
-    global exercise_id, category_id, df_angle_matrix_global, exercises_data, load_angles
+    global exercise_id, category_id, df_angle_matrix_global, exercises_data, load_angles, user_in_camera_once
 
     exercise_id = startdata[0]
     category_id = startdata[1]
@@ -130,13 +141,17 @@ def run(startdata):
         set_feedback_text = 'Namasté, happy to see you!'
         feedback_text(set_feedback_text)
 
+        
+
 
         #start the analysis (triggered by the video) if start feedback is out (maybe with some sleep or if/else)
         #...
 
         
-        # if the timer should be started (because of video results, body visible)
+
+        # start timer (should be removed and in the video or analysis function)
         timer_start()
+
 
 
 
@@ -149,6 +164,10 @@ def run(startdata):
         #give final feedback
         set_feedback_text = "I'm happy that you did it! See you in the next exercise."
         feedback_text(set_feedback_text)
+
+        # set user_in_camera_once
+        user_in_camera_once = 0
+         
 
 
 # if stopped in backend, sent to frontend and stop from there
@@ -182,19 +201,32 @@ def calculate_angles(df_angle_global_array):
 
 
 
+
+
+
 def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections):
+
+    global user_in_camera_once
+
+    # if the user was at least once completely in the camera, start the timer
+    if user_in_camera_once == 1:
+        #timer_start()
+        set_feedback_text = 'Timer started'
+        feedback_text(set_feedback_text)
+
+    # start analysis
     
     df_keypoints = get_landmarks(gettheposelandmarks)
 
     if isinstance(df_keypoints, pd.DataFrame):
 
         
-        get_if_user_in_camera = is_user_in_camera(df_keypoints['visibility'])
+        is_user_in_camera(df_keypoints['visibility'])
 
         get_df_angle_global = landmarks_to_angles(df_keypoints)
         get_diff_per100_abs = calculate_angles_difference(get_df_angle_global)
 
-        get_the_instruction = create_instruction(get_if_user_in_camera, get_diff_per100_abs)
+        get_the_instruction = create_instruction(get_diff_per100_abs)
 
         # send feedback about instruction
         if get_the_instruction != False:
@@ -203,6 +235,9 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
         get_correctness = calculate_score(get_diff_per100_abs)
         # send feedback about score
         feedback_score(get_correctness)
+
+
+
 
 
 def get_landmarks(gettheposelandmarks):
@@ -301,45 +336,59 @@ def calculate_score(diff_per100_abs):
 
 def is_user_in_camera(visibility_df_series):
 
-    #check if the user is in the camera
+    global user_in_camera_once, user_not_in_camera
+
+    #check if the user is in the camera completely (distinguish between this and empty camera)
+
+    #use >>visibility_df_series<< which is >>df_keypoints['visibility']<<
 
     if 1 == 1:
+        user_in_camera_once = user_in_camera_once + 1
         return True
     else:
+        user_not_in_camera = user_not_in_camera - 1
         return False
+
+
 
 
 def user_in_camera_time_sufficient():
 
-    #check if user was in the camera for enough time
+    global user_not_in_camera
 
-    if 1 == 1:
+    #check if user was in the camera for enough time (here 10 * seconds per frame (30 sec?) = ... sec)
+
+    if user_not_in_camera > -10:
         return True
     else:
+        # reset user_not_in_camera count
+        user_not_in_camera = 0
         return False
 
 
 
+ 
 
 
 ##### FEEDBACK #####
 
 
-def create_instruction(get_if_user_in_camera, diff_per100_abs):
+def create_instruction(diff_per100_abs):
 
-    # if the user is not completely in the camera since the start, then tell it once,
-    # if the user is at least once completely in the camera, then start the timer,
-    # if the user is not completely in the camera for too long time, then tell it again
-    # if the user is completely in the camera for enough time, then start to give detailed instructions
+    global user_in_camera_once, scoremax
 
-    if get_if_user_in_camera == True:
-        #create detailed instructions based on diff_per100_abs
-        the_instruction = 'Please, raise your right arm 10% higher.'
-    else:
+    get_user_in_camera_time_sufficient = user_in_camera_time_sufficient()
+
+    # if the user is completely in the camera for enough time and the pose was not correct yet, start to give detailed instructions
+    if get_user_in_camera_time_sufficient == True and scoremax < 8:
+        # create detailed instructions like 'Please, raise your right arm a bit higher.'
+        # use >>diff_per100_abs<<
+        the_instruction = 'Please, change your body pose.' 
+    # if the user is not completely in the camera since the start OR for too much time
+    elif user_in_camera_once == 0 or get_user_in_camera_time_sufficient == False:
         the_instruction = 'I can not see you.'
 
-    #return the_instruction
-    return False
+    return the_instruction
     
 
 
@@ -371,8 +420,19 @@ def feedback_score(correctness):
         
 
 def feedback_text(feedback_text):
-    socketio.emit('instruction', {'instruction_txt': feedback_text})
-    audio_func(feedback_text)
+    global ready_for_next_feedback
+    if ready_for_next_feedback == True:
+        socketio.emit('instruction', {'instruction_txt': feedback_text})
+        audio_func(feedback_text)
+        ready_for_next_feedback = False
+
+
+@socketio.on('feedback_waiting_loop')  
+def run(feedback_waiting_result):
+    global ready_for_next_feedback
+
+    if feedback_waiting_result == 'True':
+        ready_for_next_feedback = True
 
 
 ##### TIMER #####
@@ -414,6 +474,9 @@ def timer_stop():
 
 def audio_func(audiotext):
     tts = gTTS(text=audiotext, lang='en')
+    # make this check just once (to do)
+    if not os.path.exists('static/audio/'):
+        os.mkdir('static/audio/')
     filename = "static/audio/feedback.mp3"
     tts.save(filename)
     urlstr = 'http://127.0.0.1:5000/'+filename
@@ -444,7 +507,7 @@ def catch_frame(data):
 
 @socketio.on('image')
 def image(getdata_image):
-    global fps,cnt, prev_recv_time,fps_array,framecount
+    global fps, cnt, prev_recv_time, fps_array, framecount, user_in_camera_once
     data_image = getdata_image[0]
     camera_run = getdata_image[1]
 
@@ -456,12 +519,15 @@ def image(getdata_image):
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5) as pose:
 
-        # Timer 
-        timer_state, timer_num = timer_diff_func()    
-        if timer_state == True:   
-            timer_print(timer_num)
-        elif timer_state == False:
-            exercise_stop()
+        # if Timer could have been started
+        if user_in_camera_once != 0:
+
+            # check Timer 
+            timer_state, timer_num = timer_diff_func()    
+            if timer_state == True:   
+                timer_print(timer_num)
+            elif timer_state == False:
+                exercise_stop()
         
 
         recv_time = time.time()
