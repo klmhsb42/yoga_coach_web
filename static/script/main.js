@@ -20,6 +20,48 @@
 
 
 
+/* EXERCISES */
+
+var slide_category = 0;
+
+let slideIndex = 1;
+showSlides(slideIndex);
+
+function plusSlides(n) {
+  showSlides(slideIndex += n);
+}
+
+function currentSlide(n) {
+  showSlides(slideIndex = n);
+}
+
+function showSlides(n) {
+  let i;
+  let slides = document.getElementsByClassName("mySlides");
+  
+  if (n > slides.length) {slideIndex = 1}    
+  if (n < 1) {slideIndex = slides.length}
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";  
+  }
+  
+  slides[slideIndex-1].style.display = "block";  
+  
+}
+
+
+
+$(".hide-exercise-description").click(function(e){
+  e.preventDefault();
+  $(".text").hide();
+});
+
+$(".show-exercise-description").click(function(e){
+  e.preventDefault();
+  $(".text").show();
+}); 
+
+
 
       /* UI */
 
@@ -179,7 +221,7 @@ function starttheinterval(interval_status){
         var data = canvas.toDataURL('image/jpeg', 1.0); //before it was 0.5
         // var data = canvas.toDataURL('image/png', 1.0);
         context.clearRect(0, 0, width,height );
-        socket.emit('image', [data,1]);
+        socket.emit('image', [data,slideIndex,slide_category]);
     }, 1000/FPS);
   }else{
     clearInterval(refreshIntervalId);
@@ -243,56 +285,12 @@ async function createaudioFile(path) {
 
 
 
-/* EXERCISES */
-
-var slide_category = 0;
-
-let slideIndex = 1;
-showSlides(slideIndex);
-
-function plusSlides(n) {
-  showSlides(slideIndex += n);
-}
-
-function currentSlide(n) {
-  showSlides(slideIndex = n);
-}
-
-function showSlides(n) {
-  let i;
-  let slides = document.getElementsByClassName("mySlides");
-  
-  if (n > slides.length) {slideIndex = 1}    
-  if (n < 1) {slideIndex = slides.length}
-  for (i = 0; i < slides.length; i++) {
-    slides[i].style.display = "none";  
-  }
-  
-  slides[slideIndex-1].style.display = "block";  
-  
-}
-
-
-
-$(".hide-exercise-description").click(function(e){
-  e.preventDefault();
-  $(".text").hide();
-});
-
-$(".show-exercise-description").click(function(e){
-  e.preventDefault();
-  $(".text").show();
-}); 
-
-
 
 /* START AND STOP */
 
 function startProcess(){
     captureWebcam(true, false);
     starttheinterval(true);
-    var startdata = [slideIndex, slide_category, 1]
-    socket.emit('run', startdata);
     document.getElementById('button-start').disabled = true;
     document.getElementById('button-stop').disabled = false;
     document.getElementById('button-prev').disabled = true;
@@ -303,15 +301,22 @@ function stopProcess(){
     MediaStream.stop();
     starttheinterval(false);
     $("#photo").attr('src', '');
-    var startdata = [slideIndex, slide_category, 0]
-    socket.emit('run', startdata);
+    var emptydata = ''
+    socket.emit('exercise_stop', emptydata);
     document.getElementById('button-start').disabled = false;
     document.getElementById('button-stop').disabled = true;
     document.getElementById('button-prev').disabled = false;
     document.getElementById('button-next').disabled = false;
 }
 
-socket.on('exercisestop', function(data) {
+socket.on('exercisestoprequest', function(data) {
   // console.log(data.stopetheexercise);
   stopProcess();
 });
+
+
+
+$(window).on('load', function() {
+  var emptydata2 = ''
+  socket.emit('index_ready', emptydata2);
+ });

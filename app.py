@@ -112,67 +112,70 @@ def index():
     return render_template('index.html', exercises_data=wikipedia_data)
 
 
+
+@socketio.on('index_ready')  
+def index_ready(data):
+
+    set_feedback_text = '''Namasté, happy to see you! I am your yoga coach. It is my pleasure to help you with your exercises.
+    Just select one exercise and press the start button when ever you are ready.'''
+    audio_func(set_feedback_text)
+    
+
+
+
 ##### START / STOP EXERCISE #####
 
-@socketio.on('run')  
-def run(startdata):
-    global exercise_id, category_id, df_angle_matrix_global, exercises_data, load_angles, user_in_camera_once
+def exercise_init():
+    global exercise_id, category_id, df_angle_matrix_global, exercises_data, load_angles, user_in_camera_once, framecount
 
-    exercise_id = startdata[0]
-    category_id = startdata[1]
-    run_state = startdata[2]
+    # get correct angles of exercise and add to index dataframe
 
-    # if started in frontend
-    if run_state == 1:
+    exercise_id_low = exercise_id - 1
 
-        # get correct angles of exercise and add to index dataframe
+    correct_angles_of_current_exercise = exercises_data["category"][category_id]["exercise"][exercise_id_low]["angles"]
 
-        exercise_id_low = exercise_id - 1
+    df_angle_matrix = load_angles.copy(deep=True)
+    df_angle_matrix['angle_correct'] = correct_angles_of_current_exercise
 
-        correct_angles_of_current_exercise = exercises_data["category"][category_id]["exercise"][exercise_id_low]["angles"]
+    df_angle_matrix_global = df_angle_matrix.copy(deep=True)
 
-        df_angle_matrix = load_angles.copy(deep=True)
-        df_angle_matrix['angle_correct'] = correct_angles_of_current_exercise
+    # give start feedback
+    name_of_exercise = exercises_data["category"][category_id]["exercise"][exercise_id_low]["title"]
+    
+    set_feedback_text = 'Now, try to do the '+ name_of_exercise
+    feedback_text(set_feedback_text)
 
-        df_angle_matrix_global = df_angle_matrix.copy(deep=True)
+    #start the analysis (triggered by the video) if start feedback is out (maybe with some sleep or if/else)
+    #...
 
-
-        #give start feedback
-        set_feedback_text = 'Namasté, happy to see you!'
-        feedback_text(set_feedback_text)
-
-        
-
-
-        #start the analysis (triggered by the video) if start feedback is out (maybe with some sleep or if/else)
-        #...
-
-        
-
-        # start timer (should be removed and in the video or analysis function)
-        timer_start()
+    # start timer (should be removed and in the video or analysis function)
+    #timer_start()
 
 
 
 
-    # if stopped in frontend
-    elif run_state == 0:
-        
-        # stop timer
-        timer_stop()
 
-        #give final feedback
-        set_feedback_text = "I'm happy that you did it! See you in the next exercise."
-        feedback_text(set_feedback_text)
+@socketio.on('exercise_stop')  
+def exercise_stop(data):
+    global user_in_camera_once, framecount
 
-        # set user_in_camera_once
-        user_in_camera_once = 0
+    # stop timer
+    timer_stop()
+
+    #give final feedback
+    set_feedback_text = "I'm happy that you did it! See you in the next exercise."
+    feedback_text(set_feedback_text)
+
+    # set user_in_camera_once
+    user_in_camera_once = 0
+
+    framecount = 0
          
 
 
 # if stopped in backend, sent to frontend and stop from there
-def exercise_stop():
-    socketio.emit('exercisestop', {'stopetheexercise': True})
+def exercise_stop_request():
+    socketio.emit('exercisestoprequest', {'stopetheexercise': True})
 
 
 
@@ -515,6 +518,23 @@ def timer_stop():
     #socketio.emit('timer_socket', {'time': timerstr})
 
 
+def timer_check():
+    global user_in_camera_once
+    # if Timer could have been started
+    if user_in_camera_once != 0:
+        if user_in_camera_once == 1:
+            #print('function on fire')
+            timer_start()
+            set_feedback_text = 'Timer started'
+            feedback_text(set_feedback_text)
+        else:
+            # check Timer 
+            timer_state, timer_num = timer_diff_func()    
+            if timer_state == True:   
+                timer_print(timer_num)
+            elif timer_state == False:
+                exercise_stop_request()
+
 ##### AUDIO #####
 
 def audio_func(audiotext):
@@ -552,34 +572,24 @@ def catch_frame(data):
 
 @socketio.on('image')
 def image(getdata_image):
-    global fps, cnt, prev_recv_time, fps_array, framecount, user_in_camera_once
+    global fps, cnt, prev_recv_time, fps_array, framecount, exercise_id, category_id
     data_image = getdata_image[0]
-    camera_run = getdata_image[1]
+    exercise_id = getdata_image[1]
+    category_id = getdata_image[2]
+
+    if framecount == 0:
+        exercise_init()
+
+    timer_check()
 
     framecount = framecount + 1
 
-    #if camera_run == 1:
+    
 
     with mp_pose.Pose(
         min_detection_confidence=0.5,
         min_tracking_confidence=0.5) as pose:
 
-        
-
-        # if Timer could have been started
-        if user_in_camera_once != 0:
-            if user_in_camera_once == 1:
-                print('function on fire')
-                set_feedback_text = 'Timer started'
-                feedback_text(set_feedback_text)
-            else:
-                # check Timer 
-                timer_state, timer_num = timer_diff_func()    
-                if timer_state == True:   
-                    timer_print(timer_num)
-                elif timer_state == False:
-                    exercise_stop()
-        
 
         recv_time = time.time()
         text  =  'FPS: '+str(fps)
