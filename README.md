@@ -6,7 +6,7 @@ A computer vision based yoga coach web app
 
 ## About
 
-*Yoga Coach web* is a web app that allows you to record your body pose with your webcam and will give you feedback how good your doing on a certain exercise based on coputer vision analysis. This app was developed as my final project during the data science bootcamp at [Spiced Academy](https://www.spiced-academy.com/de/program/data-science) in Berlin. If you don't want to setup by yourself, you can have a look at the [screenshots](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/screenshots/) or the [presentation](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/docs/presentation.pdf).
+*Yoga Coach web* is a web app that allows you to record your body pose with your webcam and will give you real-time feedback how good your doing on a certain exercise based on coputer vision analysis. This app was developed as my final project during the data science bootcamp at [Spiced Academy](https://www.spiced-academy.com/de/program/data-science) in Berlin. If you don't want to setup by yourself, you can have a look at the [screenshots](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/screenshots/) or the [presentation](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/docs/presentation.pdf).
 
 ![userinterface](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/screenshots/userinterface.png)
 
@@ -35,15 +35,25 @@ To use *Yoga Coach web* is intuitive. To start, just select the exercise you wan
 
 ### Workflow
 
-*Yoga Coach web* is based on the webframework [Flask](https://palletsprojects.com/p/flask/) and [Jinja](https://palletsprojects.com/p/jinja/). Most data is send through a websocket using [Flask-SocketIO](https://flask-socketio.readthedocs.io/en/latest/). The body pose detection is performed by [MediaPipe Pose](https://google.github.io/mediapipe/solutions/pose.html) live in the backend using python. The [pose landmarks](https://google.github.io/mediapipe/solutions/pose.html#pose_landmarks) from MediaPipe Pose are used to calculate their angles. These angles were calculated for each exercise with a python script. The difference between of the correct angles and the current angles is caluclated. Then, a feedback text is created based on these differences. The text-to-speech (TTS) for feedback is performed by [gTTS](https://github.com/pndurette/gTTS).
+*Yoga Coach web* is based on the webframework [Flask](https://palletsprojects.com/p/flask/) and [Jinja](https://palletsprojects.com/p/jinja/). Most data is send through a websocket using [Flask-SocketIO](https://flask-socketio.readthedocs.io/en/latest/). The body pose detection is performed by [MediaPipe Pose](https://google.github.io/mediapipe/solutions/pose.html) live in the backend using python. The [pose landmarks](https://google.github.io/mediapipe/solutions/pose.html#pose_landmarks) from MediaPipe Pose are used to calculate their angles. For this project, 16 angles were considered to be relevant and defined in [this .csv file](https://github.com/klmhsb42/yoga_coach_web/blob/main/static/angles.csv). These angles were calculated for each exercise with a python script. The difference between of the correct angles and the current angles is caluclated. Then, a feedback text is created based on these differences. The text-to-speech (TTS) for feedback is performed by [gTTS](https://github.com/pndurette/gTTS).
 
 ### Scientific reading
 
 The workflow was inspired by [Muley et. al 2020](https://www.irjmets.com/uploadedfiles/paper/volume2/issue_9_september_2020/4037/1628083159.pdf) and [Thoutam et. al 2022](https://doi.org/10.1155/2022/4311350).
 
-MediaPipe Pose is based on ... and has advantages ...
+About *MediaPipe Pose* setup used in this project:
 
-gTTS is based on ...
+* is based on ... 
+* 2D images are sufficient
+* Returns the ID and 3D coordinates of 33 landmarks including their level of visibility
+* Distinguishes between left and right
+* Scales the coordinates regarding the size of a person and distance to the camera (not relevant for calculation of angles)
+* Releations between key landmarks and joints are known
+* Performance ...
+
+About *gTTS*:
+
+* is based on ...
 
 ### EDA and calculation of angles
 

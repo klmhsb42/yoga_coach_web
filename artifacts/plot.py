@@ -138,7 +138,7 @@ def create_data():
     def create_plot(final_df, cn2):
     '''
 
-    final_df.to_csv('plot_df.csv', sep='\t', encoding='utf-8')
+    # final_df.to_csv('plot_df.csv', sep='\t', encoding='utf-8')
 
     #.update_traces(marker={"color": "red"})
     '''

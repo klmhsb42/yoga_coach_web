@@ -6,7 +6,7 @@ import json
 #import mediapipe as mp
 
 #
-df_angle_matrix = pd.read_csv('angles.csv', sep=',')
+df_angle_matrix = pd.read_csv('../static/angles.csv', sep=',')
 
 #df_angle_matrix_global = pd.DataFrame()
 
