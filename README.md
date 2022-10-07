@@ -12,7 +12,7 @@ A computer vision based yoga coach web app
 
 ## Credits
 
-I thank all people from [Spiced Academy](https://www.spiced-academy.com/de/about) and [Bundesagentur f&uuml;r Arbeit](https://www.arbeitsagentur.de/) that supported me. Images for exercises were taken from [commons.wikimedia.org](https://commons.wikimedia.org/). The respective URL and date of access are shown in the app. Descriptions of exercises are taken from the [en.wikipedia.org](https://en.wikipedia.org/wiki/) JSON API and a respective link given to further read the article. The video stream processing was followed from the [MediaPipe Pose python API](https://google.github.io/mediapipe/solutions/pose.html) and [this pyshine tutorial](https://pyshine.com/Online-Video-Processing-From-Client-Camera/). The script for plotting of body pose landmarks is based on these two threads [1](https://stackoverflow.com/questions/69265059/is-it-possible-to-create-a-plotly-animated-3d-scatter-plot-of-mediapipes-body-p), [2](https://community.plotly.com/t/3d-scatter-animation/46368).
+I thank all people from [Spiced Academy](https://www.spiced-academy.com/de/about) and [Bundesagentur f&uuml;r Arbeit](https://www.arbeitsagentur.de/) that supported me. Images for exercises were taken from [commons.wikimedia.org](https://commons.wikimedia.org/). The respective URL and date of access are shown in the app. Descriptions of exercises are taken from the [en.wikipedia.org](https://en.wikipedia.org/wiki/) JSON API and a respective link given to further read the article. The video stream processing was followed from the [MediaPipe Pose python API](https://google.github.io/mediapipe/solutions/pose.html) and [this pyshine tutorial](https://pyshine.com/Online-Video-Processing-From-Client-Camera/). The script for plotting of body pose landmarks is based on these two threads [1](https://stackoverflow.com/questions/69265059/is-it-possible-to-create-a-plotly-animated-3d-scatter-plot-of-mediapipes-body-p), [2](https://community.plotly.com/t/3d-scatter-animation/46368). The angles were calculated following [this thread](https://stackoverflow.com/questions/2827393/angles-between-two-n-dimensional-vectors-in-python).
 
 ## How to setup (Linux)
 
@@ -47,7 +47,7 @@ gTTS is based on ...
 
 ### EDA and calculation of angles
 
-The EDA of the returned pose landmarks is documented in [this Jupyter Notebook](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/analysis.ipynb). Furthermore, how the angles were calculated and compared between correct and wrong pose by one example exercise. The angles were calculated following [this thread](https://stackoverflow.com/questions/2827393/angles-between-two-n-dimensional-vectors-in-python).
+The EDA of the returned pose landmarks is documented in [this Jupyter Notebook](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/analysis.ipynb). Furthermore, how the angles were calculated and compared between correct and wrong pose by one example exercise.
 
 ## How to add new exercises
 
