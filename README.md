@@ -58,8 +58,8 @@ Relevant properties:
 * Prediction in real-time
 
 Interesting but not relevant for this project (yet):
-    * Scales the coordinates regarding the size of a person and distance to the camera (not relevant for calculation of angles)
-    * Forcasts landmarks of unvisible body parts
+* Scales the coordinates regarding the size of a person and distance to the camera (not relevant for calculation of angles)
+* Forcasts landmarks of unvisible body parts
 
 ### EDA of landmarks and calculation of angles
 
