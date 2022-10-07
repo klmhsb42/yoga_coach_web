@@ -29,7 +29,7 @@ I thank all people from [Spiced Academy](https://www.spiced-academy.com/de/about
 
 ## How to use
 
-To use *Yoga Coach web* is intuitive. To start, just select the exercise you want to start with using the "Prev"/"Next" buttons and press the "Start" button. Place your computer so that your full body is visible in the webcam. Then, try to perform the exercise and listen to the feedback.
+To use *Yoga Coach web* is intuitive. To start, just select the exercise you want to start with using the *Prev*/*Next* buttons and press the *Start* button. Place your computer so that your full body is visible in the webcam. Then, try to perform the exercise and listen to the feedback.
 
 ## Technical background
 
@@ -47,7 +47,7 @@ gTTS is based on ...
 
 ### EDA and calculation of angles
 
-The EDA of the returned pose landmarks is documented in [this](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/analysis.ipynb) Jupyter Notebook. Furthermore, how the angles were calculated and compared between correct and wrong pose by one example exercise. The angles were calculated following this thread [here](https://stackoverflow.com/questions/2827393/angles-between-two-n-dimensional-vectors-in-python).
+The EDA of the returned pose landmarks is documented in [this Jupyter Notebook](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/analysis.ipynb). Furthermore, how the angles were calculated and compared between correct and wrong pose by one example exercise. The angles were calculated following [this thread](https://stackoverflow.com/questions/2827393/angles-between-two-n-dimensional-vectors-in-python).
 
 ## How to add new exercises
 
