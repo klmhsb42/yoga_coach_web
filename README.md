@@ -43,21 +43,21 @@ The workflow was inspired by [Muley et. al 2020](https://www.irjmets.com/uploade
 
 ### Prediction of landmarks
 
-About *MediaPipe Pose* setup used in this project:
-
+About *MediaPipe Pose*:
 * [Models](https://google.github.io/mediapipe/solutions/pose.html#models) are based on:
-    * BlazePose Detector to detect the person/pose in general (using two extra virtual keypoints), [see BlazeFace model](https://arxiv.org/abs/1907.05047)
+    * BlazePose Detector to detect the person/pose in general (using two extra virtual keypoints), see also [BlazeFace model](https://arxiv.org/abs/1907.05047)
     * [BlazePose GHUM 3D](https://github.com/google-research/google-research/tree/master/ghum) to predict the landmarks, based on Deep Learning using 3D scans (question which version is used, heavy, full, or lite)
 * [View source code](https://github.com/google/mediapipe)
 * [View performance](https://google.github.io/mediapipe/solutions/pose.html#pose-estimation-quality)
 
+Relevant properties:
 * 2D images are sufficient
 * Returns the ID and 3D coordinates of 33 landmarks including their level of visibility
 * Distinguishes between left and right
 * Releations between key landmarks and joints are known
 * Prediction in real-time
 
-* Interesting but not relevant for this project (yet):
+Interesting but not relevant for this project (yet):
     * Scales the coordinates regarding the size of a person and distance to the camera (not relevant for calculation of angles)
     * Forcasts landmarks of unvisible body parts
 
