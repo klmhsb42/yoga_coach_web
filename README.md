@@ -51,19 +51,34 @@ The EDA of the returned pose landmarks is documented in [this](https://github.co
 
 ## How to add new exercises
 
+### Edit dictionary of exercises
+
+To add new exercises you have to modify [exercises.json](https://github.com/klmhsb42/yoga_coach_web/blob/main/static/exercises.json). You can either create a new category and add the new exercise there or you can add it dirrectly to an exsisting category. You can also add an image of the exercise into the [static/exercises](https://github.com/klmhsb42/yoga_coach_web/blob/main/static/exercises/) folder respectively to the system in the JSON file. Please, insert it's origin and respect copyrights.
+
 ### Collect data
 
-First, you need to collect data of your body pose. For that, you can use [gather.py](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/gather.py) by running `python gather.py` inside the `yoga_coach_web/artifacts/` folder. Your webcam will open and start capturing your body pose landmarks per frame and save them as JSON file under `yoga_coach_web/artifacts/collect/` folder. To gather correct landmarks, place your computer so that your full body is visible in the webcam and then, perform the excersice correctly. You can stop the script by pressing `Ctrl + C`.
+First, you need gather landmarks as JSON file of the new excercise. Yo can do so by either:
+
+1) Use the image which you have added in the previous step.
+2) Or record yourself with your webcam and perform the exercise correctly.
+
+For 1):
+
+Use [gather_from_image.py](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/gather_from_image.py) by running `python gather_from_image.py` inside the `artifacts/` folder. Before running, setup the path to the image you want to use. The script will calculate body pose landmarks and save them as JSON file under `artifacts/collect/` folder as well as a new image file with the landmarks printed in the same directory as your input image. 
+
+For 2):
+
+Use [gather_from_webcam.py](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/gather_from_webcam.py) by running `python gather_from_webcam.py` inside the `artifacts/` folder. Your webcam will open and start capturing your body pose landmarks per frame and save them as JSON files under `artifacts/collect/` folder. To gather correct landmarks, place your computer so that your full body is visible in the webcam and then, perform the excersice correctly. You can stop the script by pressing `Ctrl + C`. Remove files from `artifacts/collect/` folder if you re-run the script.
 
 ### Select correct data
 
-Next, you need to select one body pose with the landmarks represting this excersice best. To select the right one, you can plot the landmarks using [plot.py](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/plot.py). For that, run `python plot.py` inside the `yoga_coach_web/artifacts/` folder.
+Next, if you have used your webcam, you need to select one body pose with the landmarks represting this excersice best. To select the right one, you can plot the landmarks using [plot.py](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/plot.py). For that, run `python plot.py` inside the `artifacts/` folder.
 
 ### Calculate angles
 
-To calculate the angles of these correct pose landmarks you can use [angles.py](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/angles.py) by running `python angles.py` inside the `yoga_coach_web/artifacts/` folder. This will print an array of angle values inside the terminal. Copy this array and insert it in the following step.
+To calculate the angles of these correct pose landmarks you can use [angles.py](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/angles.py) by running `python angles.py` inside the `artifacts/` folder. This will print an array of angle values inside the terminal. Copy this array and insert it in the following step.
 
 ### Add new exercises and insert data
 
-To add new exercises you have to modify [exercises.json](https://github.com/klmhsb42/yoga_coach_web/blob/main/static/exercises.json). You can either create a new category and add the new exercise there or you can add it dirrectly to an exsisting category. The copied angles from the previous step must then be inserted into `"angles": []` for this new exercise. Now you are ready to re-run the server (see How to setup) and test your new created exercise.
+The copied angles from the previous step must then be inserted into `"angles": []` for this new exercise in the [exercises.json](https://github.com/klmhsb42/yoga_coach_web/blob/main/static/exercises.json) file. Now you are ready to re-run the server (see How to setup) and test your new created exercise.
 
