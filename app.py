@@ -78,7 +78,7 @@ user_not_in_camera = 0
 # ***FEEDBACK***
 
 ready_for_next_feedback = True
-
+user_in_camera_time_sufficient_told = False
 
 
 ##### TEST SOCKET #####
@@ -128,28 +128,21 @@ def index_ready(data):
 def exercise_init():
     global exercise_id, category_id, df_angle_matrix_global, exercises_data, load_angles, user_in_camera_once, framecount
 
-    # get correct angles of exercise and add to index dataframe
-
     exercise_id_low = exercise_id - 1
 
-    correct_angles_of_current_exercise = exercises_data["category"][category_id]["exercise"][exercise_id_low]["angles"]
+    # reset feedback from last exercise
+    feedback_score_reset()
 
+    # get correct angles of exercise and add to index dataframe
+    correct_angles_of_current_exercise = exercises_data["category"][category_id]["exercise"][exercise_id_low]["angles"]
     df_angle_matrix = load_angles.copy(deep=True)
     df_angle_matrix['angle_correct'] = correct_angles_of_current_exercise
-
     df_angle_matrix_global = df_angle_matrix.copy(deep=True)
 
     # give start feedback
     name_of_exercise = exercises_data["category"][category_id]["exercise"][exercise_id_low]["title"]
-    
     set_feedback_text = 'Now, try to do the '+ name_of_exercise
     feedback_text(set_feedback_text)
-
-    #start the analysis (triggered by the video) if start feedback is out (maybe with some sleep or if/else)
-    #...
-
-    # start timer (should be removed and in the video or analysis function)
-    #timer_start()
 
 
 
@@ -157,7 +150,7 @@ def exercise_init():
 
 @socketio.on('exercise_stop')  
 def exercise_stop(data):
-    global user_in_camera_once, framecount
+    global user_in_camera_once, framecount, user_in_camera_time_sufficient_told
 
     # stop timer
     timer_stop()
@@ -166,9 +159,11 @@ def exercise_stop(data):
     set_feedback_text = "I'm happy that you did it! See you in the next exercise."
     feedback_text(set_feedback_text)
 
-    # set user_in_camera_once
-    user_in_camera_once = 0
+    #reset feedback settings
+    user_in_camera_time_sufficient_told = False
 
+    # rseset user_in_camera_once and framecount
+    user_in_camera_once = 0
     framecount = 0
          
 
@@ -211,19 +206,12 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
 
     global user_in_camera_once
 
-    # if the user was at least once completely in the camera, start the timer
-    # if user_in_camera_once == 1:
-        # timer_start()
-        # set_feedback_text = 'Timer started'
-        # feedback_text(set_feedback_text)
-
-    # start analysis
+    # start analysis if their are any landmarks
     
     df_keypoints = get_landmarks(gettheposelandmarks)
 
     if isinstance(df_keypoints, pd.DataFrame):
 
-        
         is_user_in_camera(list(df_keypoints['visibility']))
 
         get_df_angle_global = landmarks_to_angles(df_keypoints)
@@ -231,12 +219,12 @@ def analyze(gettheposelandmarks, gettheposeworldlandmarks, gettheposeconnections
 
         get_the_instruction = create_instruction(get_diff_per100_abs)
 
-        # send feedback about instruction
+        # get values and send feedback about instruction
         if get_the_instruction != False:
             feedback_text(get_the_instruction)
 
+        # get values and send feedback about score
         get_correctness = calculate_score(get_diff_per100_abs)
-        # send feedback about score
         feedback_score(get_correctness)
 
 
@@ -324,7 +312,7 @@ def calculate_score(diff_per100_abs):
     list_of_angle_diff_length = len(list(diff_per100_abs))
 
     # How much difference in % is allowed between correct and current angle
-    angle_threshold = 7
+    angle_threshold = 6
 
     # How many angles are below this threshold
     list_of_angle_diff_threshold = sum(i < angle_threshold for i in list(diff_per100_abs))
@@ -401,8 +389,9 @@ def user_in_camera_time_sufficient():
     global user_not_in_camera
 
     #check if user was in the camera for enough time (here 5 * seconds per frame (30 sec?) = ... sec)
+    user_not_in_camera_threshold = -5
 
-    if user_not_in_camera > -5:
+    if user_not_in_camera > user_not_in_camera_threshold:
         return True
     else:
         # reset user_not_in_camera count
@@ -419,7 +408,7 @@ def user_in_camera_time_sufficient():
 
 def create_instruction(diff_per100_abs):
 
-    global user_in_camera_once, scoremax
+    global user_in_camera_once, scoremax, user_in_camera_time_sufficient_told
 
     get_user_in_camera_time_sufficient = user_in_camera_time_sufficient()
 
@@ -431,7 +420,12 @@ def create_instruction(diff_per100_abs):
         the_instruction = False
     # if the user is not completely in the camera since the start OR for too much time
     elif user_in_camera_once == 0 or get_user_in_camera_time_sufficient == False:
-        the_instruction = 'I can not see you.'
+        #just tell it once for now
+        if user_in_camera_time_sufficient_told == False:
+            the_instruction = 'I can not see you.'
+            user_in_camera_time_sufficient_told = True
+        else:
+            the_instruction = False
     # no instruction
     else:
         the_instruction = False
@@ -443,10 +437,12 @@ def create_instruction(diff_per100_abs):
 def feedback_score(correctness):
     global score, scoremax
 
-    score = correctness / 10
+    score = correctness / 10 # scale to from % to 10
     score = int(score)
 
-    if score >= 8:
+    correctness_threshold = 8 # means 80 % of angles correct
+
+    if score >= correctness_threshold:
         score_message = 'correct'
         score_color = 'green'
         score_max_message = 'correct'
@@ -462,10 +458,19 @@ def feedback_score(correctness):
     if score > scoremax:
         scoremax = score
         socketio.emit('score_max', {'score_max_val': scoremax, 'score_max_message': score_max_message, 'score_max_color': score_max_color})
-        if scoremax > 8:
+        if scoremax >= correctness_threshold:
             set_feedback_text = 'New score, good job!'
             feedback_text(set_feedback_text)
-        
+
+def feedback_score_reset():
+    global score, scoremax
+
+    score = 0
+    scoremax = 0
+
+    socketio.emit('score', {'score_val': score, 'score_message': 'No status.', 'score_color': 'black'})
+    socketio.emit('score_max', {'score_max_val': scoremax, 'score_max_message': 'No status.', 'score_max_color': 'black'})
+
 
 def feedback_text(feedback_text):
     global ready_for_next_feedback
@@ -511,9 +516,14 @@ def timer_diff_func():
 def timer_stop():
     global time_timer_started, time_timer_ended, time_difference, timer_length
     #time_timer_started = datetime(1, 1, 1, 0, 0, 0) # set to 0 min 0 sec so that the time_difference is 0
+    
+    # reset time difference
     time_difference = timedelta(minutes=(timer_length+1))
-    time_timer_ended = datetime.now() # not used yet
+    # save time when timer was stopped (not used yet)
+    time_timer_ended = datetime.now()
+    # reset printed time
     timer_print(0)
+
     #timerstr = '{:02d}:{:02d}'.format(0, 0)
     #socketio.emit('timer_socket', {'time': timerstr})
 
@@ -539,14 +549,12 @@ def timer_check():
 
 def audio_func(audiotext):
     tts = gTTS(text=audiotext, lang='en')
-    # make this check just once (to do)
+    # make this os dir check just once (to do)
     if not os.path.exists('static/audio/'):
         os.mkdir('static/audio/')
     filename = "static/audio/feedback.mp3"
     tts.save(filename)
-    urlstr = 'http://127.0.0.1:5000/'+filename
-    bloburl = 'http://127.0.0.1:5000/static/'
-    socketio.emit('audio_socket', {'audiofile': "feedback.mp3", 'audio_url': urlstr, 'bloburl': bloburl})
+    socketio.emit('audio_socket', {'audiofile': ""})
 
 
 ##### VIDEO #####
@@ -573,18 +581,17 @@ def catch_frame(data):
 @socketio.on('image')
 def image(getdata_image):
     global fps, cnt, prev_recv_time, fps_array, framecount, exercise_id, category_id
+
     data_image = getdata_image[0]
     exercise_id = getdata_image[1]
     category_id = getdata_image[2]
 
     if framecount == 0:
         exercise_init()
-
+    #else:
     timer_check()
 
     framecount = framecount + 1
-
-    
 
     with mp_pose.Pose(
         min_detection_confidence=0.5,
@@ -645,5 +652,4 @@ def image(getdata_image):
 
 
 if __name__ == '__main__':
-    #app.run(host='0.0.0.0', port=2204, threaded=True)
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True) 
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True) # threaded=True
