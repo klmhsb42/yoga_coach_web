@@ -41,23 +41,34 @@ To use *Yoga Coach web* is intuitive. To start, just select the exercise you wan
 
 The workflow was inspired by [Muley et. al 2020](https://www.irjmets.com/uploadedfiles/paper/volume2/issue_9_september_2020/4037/1628083159.pdf) and [Thoutam et. al 2022](https://doi.org/10.1155/2022/4311350).
 
+### Prediction of landmarks
+
 About *MediaPipe Pose* setup used in this project:
 
-* is based on ... 
+* [Models](https://google.github.io/mediapipe/solutions/pose.html#models) are based on:
+** BlazePose Detector to detect the person/pose in general (using two extra virtual keypoints), [see BlazeFace model](https://arxiv.org/abs/1907.05047)
+** [BlazePose GHUM 3D](https://github.com/google-research/google-research/tree/master/ghum) to predict the landmarks, based on Deep Learning using 3D scans (question which version is used, heavy, full, or lite)
+* [View source code](https://github.com/google/mediapipe)
+* [View performance](https://google.github.io/mediapipe/solutions/pose.html#pose-estimation-quality)
+
 * 2D images are sufficient
 * Returns the ID and 3D coordinates of 33 landmarks including their level of visibility
 * Distinguishes between left and right
-* Scales the coordinates regarding the size of a person and distance to the camera (not relevant for calculation of angles)
 * Releations between key landmarks and joints are known
-* Performance ...
+* Prediction in real-time
 
-About *gTTS*:
+* Interesting but not relevant for this project (yet):
+** Scales the coordinates regarding the size of a person and distance to the camera (not relevant for calculation of angles)
+** Forcasts landmarks of unvisible body parts
 
-* is based on ...
+### EDA of landmarks and calculation of angles
 
-### EDA and calculation of angles
+The EDA of the returned pose landmarks is documented in [this Jupyter Notebook](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/analysis.ipynb). Furthermore, how the angles were calculated and compared between correct and wrong pose by one example exercise. Positive or negative sign of angle differences tell if clockwise or anticlockwise. 
 
-The EDA of the returned pose landmarks is documented in [this Jupyter Notebook](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/analysis.ipynb). Furthermore, how the angles were calculated and compared between correct and wrong pose by one example exercise.
+### Feedback generation
+
+* *gTTS* uses the Google Translate's text-to-speech API with no further documentation, see [here](https://github.com/pndurette/gTTS#disclaimer)
+* For now, there are just simple sentences which will be made more complex in future [#13](https://github.com/klmhsb42/yoga_coach_web/issues/13)
 
 ## How to add new exercises
 
