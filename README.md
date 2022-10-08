@@ -56,7 +56,7 @@ Relevant properties:
 * 2D images are sufficient
 * Returns the ID and 3D coordinates of 33 landmarks including their level of visibility
 * Distinguishes between left and right
-* Releations between key landmarks and joints are known
+* Relations between key landmarks and joints are known
 * Prediction in real-time
 
 Interesting but not relevant for this project (yet):
