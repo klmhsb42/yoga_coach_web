@@ -10,6 +10,8 @@ A computer vision based yoga coach web app
 
 ![userinterface](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/screenshots/userinterface.png)
 
+The picture in this screenshot was taken from [commons.wikimedia.org](https://upload.wikimedia.org/wikipedia/commons/8/8c/Mr-yoga-boat-pose2.jpg) on 03/10/2022.
+
 ## Credits
 
 I thank all people from [Spiced Academy](https://www.spiced-academy.com/de/about) and [Bundesagentur f&uuml;r Arbeit](https://www.arbeitsagentur.de/) that supported me. Images for exercises were taken from [commons.wikimedia.org](https://commons.wikimedia.org/). The respective URL and date of access are shown in the app. Descriptions of exercises are taken from the [en.wikipedia.org](https://en.wikipedia.org/wiki/) JSON API and a respective link given to further read the article. The image or video stream processing was followed from the [MediaPipe Pose python API](https://google.github.io/mediapipe/solutions/pose.html) and [this pyshine tutorial](https://pyshine.com/Online-Video-Processing-From-Client-Camera/). The script for plotting of body pose landmarks is based on these two threads [1](https://stackoverflow.com/questions/69265059/is-it-possible-to-create-a-plotly-animated-3d-scatter-plot-of-mediapipes-body-p), [2](https://community.plotly.com/t/3d-scatter-animation/46368). The angles were calculated following [this thread](https://stackoverflow.com/questions/2827393/angles-between-two-n-dimensional-vectors-in-python).
