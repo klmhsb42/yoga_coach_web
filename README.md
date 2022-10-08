@@ -75,8 +75,8 @@ The EDA of the returned pose landmarks is documented in [this Jupyter Notebook](
 
 ### Feedback generation
 
-* *gTTS* uses the Google Translate's text-to-speech API with no further documentation, see [here](https://github.com/pndurette/gTTS#disclaimer)
 * For now, there are just simple sentences which will be made more complex in future [#13](https://github.com/klmhsb42/yoga_coach_web/issues/13)
+* *gTTS* uses the Google Translate's text-to-speech API with no further documentation, see [here](https://github.com/pndurette/gTTS#disclaimer)
 
 ## How to add new exercises
 
