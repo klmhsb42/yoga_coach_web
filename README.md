@@ -63,7 +63,15 @@ Interesting but not relevant for this project (yet):
 
 ### EDA of landmarks and calculation of angles
 
-The EDA of the returned pose landmarks is documented in [this Jupyter Notebook](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/analysis.ipynb). Furthermore, how the angles were calculated and compared between correct and wrong pose by one example exercise. Positive or negative sign of angle differences tell if clockwise or anticlockwise. 
+The EDA of the returned pose landmarks is documented in [this Jupyter Notebook](https://github.com/klmhsb42/yoga_coach_web/blob/main/artifacts/analysis.ipynb). Furthermore, how the angles were calculated and compared between correct and wrong pose by one example exercise. 
+
+* First, the connecting vectors for both key landmarks with their joint are calculated by subtraction: (key vector) - (joint vector)
+* Next, the [unit vectors](https://en.wikipedia.org/wiki/Unit_vector) are calculated for both resulting vectors with: (vector) / ([np.linalg.norm](https://numpy.org/doc/stable/reference/generated/numpy.linalg.norm.html)(vector))
+* The [dot product](https://en.wikipedia.org/wiki/Dot_product) of both vectors is the calculated
+* The [arccosine](https://en.wikipedia.org/wiki/Inverse_trigonometric_functions) of the result is calculated to get the angle as radian
+* The [radian](https://en.wikipedia.org/wiki/Radian) is calculated in degree with: (value) * (180/np.pi)
+* The correctness of the current angle and the default angle was calculated by substraction: (default angle) - (current angle)
+* Positive or negative sign of angle differences tell if clockwise or anticlockwise. 
 
 ### Feedback generation
 
