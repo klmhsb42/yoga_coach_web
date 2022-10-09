@@ -329,7 +329,7 @@ def is_user_in_camera(visibility_df_series):
 
     global user_in_camera_once, user_not_in_camera
 
-    #check if the user is in the camera completely (distinguish between this and empty camera = no landmarks; to do)
+    #check if the user is in the camera completely
 
     
     # group numbers: 0 = head; 1 = left arm; 2 = right arm; 3 = chest; 4 = left leg; 5 = right leg
@@ -459,7 +459,7 @@ def feedback_score(correctness):
         scoremax = score
         socketio.emit('score_max', {'score_max_val': scoremax, 'score_max_message': score_max_message, 'score_max_color': score_max_color})
         if scoremax >= correctness_threshold:
-            set_feedback_text = 'New score, good job!'
+            set_feedback_text = 'New score, good job!' # 'Please hold your pose for the next xxx minutes.'
             feedback_text(set_feedback_text)
 
 def feedback_score_reset():
