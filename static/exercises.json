@@ -6,7 +6,7 @@
             "exercise": [
                 {
                     "title": "Tree with arms up",
-                    "img": "static/excercises/0/1/yoga-mirror.jpg",
+                    "img": "static/excercises/0/1/yoga.jpg",
                     "img-origin": "https://commons.wikimedia.org/wiki/File:Vriksasana_Yoga-Asana_Nina-Mel.jpg",
                     "img-date": "03/10/2022",
                     "description-api": "Vriksasana",
@@ -16,7 +16,7 @@
                 },
                 {
                     "title": "Lord of the dance",
-                    "img": "static/excercises/0/2/yoga-mirror.jpg",
+                    "img": "static/excercises/0/2/yoga.jpg",
                     "img-origin": "https://commons.wikimedia.org/wiki/File:Mr-yoga-lord_of_dance_4.jpg",
                     "img-date": "03/10/2022",
                     "description-api": "Natarajasana",

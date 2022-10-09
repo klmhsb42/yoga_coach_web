@@ -16,7 +16,8 @@ mp_pose = mp.solutions.pose
 _VISIBILITY_THRESHOLD = 0.5
 
 filemode = 0 # 1 = 'pose_world_landmarks' and 0 = 'pose_landmarks'
-mypath = 'collect/img/'+str(filemode)+'/'
+gather_type = 'img' # or 'video'
+mypath = 'collect/'+gather_type+'/'+str(filemode)+'/'
 onlyfiles = [f for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))]
 
 f_connections = open('connections.json')
@@ -35,9 +36,10 @@ def create_data():
 
     global mypath, onlyfiles, connections
 
-    landmarks_array = [] #["z","x","y","lm"]
-    #cn2 = {"xs": [], "ys": [], "zs": []}
+    
+    
     list_of_cn2 = []
+    list_of_names = []
     
 
     for fileidx, landmarkfile in enumerate(onlyfiles):
@@ -52,6 +54,7 @@ def create_data():
 
         plotted_landmarks = {}
 
+
         for idx, landmark in enumerate(landmark_list):
             ##if (
             ##    landmark['Visibility'] < _VISIBILITY_THRESHOLD
@@ -62,10 +65,12 @@ def create_data():
             ##    continue
             plotted_landmarks[idx] = (-landmark['Z'], landmark['X'], -landmark['Y'])
 
+
         if connections:
             out_cn = []
             idx_pair_list = []
             num_landmarks = len(landmark_list)
+            
             # Draws the connections if the start and end landmarks are both visible.
             for connection in connections['list']:
                 start_idx = connection[0]
@@ -97,18 +102,8 @@ def create_data():
                     )
 
             
-            # df_conn = pd.DataFrame(out_cn)
-            # df_conn_idx = pd.DataFrame(idx_pair_list)
-    
-            # #df_conn_idx["lm"] = idx_pair_list.map(lambda s: mp_pose.PoseLandmark(s).name).values[0]
-            # df_conn_idx["start_name"] = df_conn_idx['start_idx'].map(lambda s: mp_pose.PoseLandmark(s).name).values
-            # df_conn_idx["end_name"] = df_conn_idx['end_idx'].map(lambda s: mp_pose.PoseLandmark(s).name).values
-            # df_conn_idx = df_conn_idx.merge(df_conn, left_index=True, right_index=True)
-            
-            # df_conn.to_csv('plot_df_conn.csv', sep='\t', encoding='utf-8')
-            # df_conn_idx.to_csv('plot_df_conn_idx.csv', sep='\t', encoding='utf-8')
 
-
+            # get landmark coordinates from out_cn
             cn2 = {"x": [], "y": [], "z": [],}
             for pair in out_cn:
                 for k in pair.keys():
@@ -117,54 +112,25 @@ def create_data():
                     cn2[k].append(None)
             list_of_cn2.append(cn2)
 
-
-        df = pd.DataFrame(plotted_landmarks).T.rename(columns={0: "z", 1: "x", 2: "y"})
-
-        df["lm"] = df.index.map(lambda s: mp_pose.PoseLandmark(s).name).values
-
-        df["step"] = fileidx
-
-        landmarks_array_values = df.to_numpy()
-
-        for ln_a_val in landmarks_array_values:
-            landmarks_array.append(ln_a_val)
+            new_df = pd.DataFrame(plotted_landmarks).T.rename(columns={0: "z", 1: "x", 2: "y"})
+            new_df["lm"] = new_df.index.map(lambda s: mp_pose.PoseLandmark(s).name).values
+            landmarknames33 = list(new_df.index.map(lambda s: mp_pose.PoseLandmark(s).name).values)
 
 
-    final_df = pd.DataFrame(landmarks_array).rename(columns={0: "z", 1: "x", 2: "y", 3: "lm", 4: "step"})
+            # get landmark names for labels from idx_pair_list
+            get_names = {"names": []}
+            for getpair in idx_pair_list:
+                get_start_idx_val = getpair['start_idx']
+                get_stop_idx_val = getpair['end_idx']
+                get_names['names'].append(landmarknames33[get_start_idx_val])
+                get_names['names'].append(landmarknames33[get_stop_idx_val])
+                get_names['names'].append(None)
+            list_of_names.append(get_names)
+
+        
+        
     
-    '''
-    create_plot(final_df, cn2)
-
-    def create_plot(final_df, cn2):
-    '''
-
-    # final_df.to_csv('plot_df.csv', sep='\t', encoding='utf-8')
-
-    #.update_traces(marker={"color": "red"})
-    '''
-    fig = (
-        px.scatter_3d(final_df, x="z", y="x", z="y", hover_name="lm", color="step")
-        .update_layout(
-            margin={"l": 0, "r": 0, "t": 0, "b": 0},
-            scene={"camera": {"eye": {"x": 2.1, "y": 0, "z": 0}}},
-        )
-    )
-    '''
-
-    '''
-    fig.add_traces(
-        [
-            go.Scatter3d(
-                x=cn2["xs"],
-                y=cn2["ys"],
-                z=cn2["zs"],
-                mode="lines",
-                line={"color": "black", "width": 5},
-                name="connections",
-            )
-        ]
-    )
-    '''
+    
     fig = go.Figure(go.Scatter3d(x=[], y=[], z=[],
                              #mode="lines", #"markers",
                              marker=dict(color="red", size=5),
@@ -173,48 +139,31 @@ def create_data():
                              )
                 )
 
-    #print(list_of_cn2)
-    #print(cn2["ys"])
-    # Frames
-
-    num_of_chunks = final_df.shape[0] / 33
-
-    #for chunk_test in np.array_split(final_df, num_of_chunks):
-        #print(splitted_dataframe)
-        #print(chunk_test['x'])
-
-    #list_of_cn2[chunk_idx]
-    #print(list_of_cn2[0])
+    
 
     frames = [go.Frame(data= [go.Scatter3d(x=chunk['x'],
                                         y=chunk['y'],
                                         z=chunk['z'],
-                                        hovertemplate='step:'+np.array_split(final_df, num_of_chunks)[chunk_idx]['lm'], #+'x:'+str(chunk['x'][chunk_idx]),
+                                        hovertemplate="<br>".join([
+                                                "X: %{x}",
+                                                "Y: %{y}",
+                                                "Z: %{z}",
+                                                "Name: %{text}",
+                                            ]),
+                                        text = [textstr for textstr in list_of_names[0]['names']]
                                         )
                             ],
-                    traces=[0], #list_of_cn2[chunk_idx], # [0],
-                    name=f'frame{chunk_idx}', #f'frame{str(chunk['step'][0])}'   
-                    )for chunk_idx, chunk in enumerate(list_of_cn2) #enumerate(np.array_split(final_df, num_of_chunks)) #for k in range(len(final_df["x"])-1) #len(33)-1 #hard coded!!!
+                    traces=[0],
+                    name=f'frame{chunk_idx}',  
+                    )for chunk_idx, chunk in enumerate(list_of_cn2)
             ]
 
-    '''frames = [go.Frame(data= [go.Scatter3d(x=cn2[:k+1],
-                                        y=cn2[:k+1],
-                                        z=cn2[:k+1],
-                                        mode="lines",
-                                        line={"color": "black", "width": 5},
-                                        name="connections",
-                                        )
-                            ],
-                    traces= [0],
-                    name=f'frame{k}'      
-                    )for k  in  range(32) #len(33)-1
-            ]'''
 
     fig.update(frames=frames)
 
 
     
-    ''''''
+    
 
     sliders = [
         {

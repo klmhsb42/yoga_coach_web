@@ -10,7 +10,7 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_pose = mp.solutions.pose
 
 framecount = 0
-path_train_save = 'collect/'
+path_train_save = 'collect/video/'
 create_folder = 'collect'
 
 #set_landmark_mode = 'pose_world_landmarks' # or 'pose_landmarks'
